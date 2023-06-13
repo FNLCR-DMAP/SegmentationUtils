@@ -1,0 +1,34 @@
+# Compiled
+__pycache__/
+
+# Temporary
+.tmp/
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Distribution
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
