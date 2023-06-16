@@ -1,5 +1,6 @@
-import os
+import os, sys, math
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import urllib.request as urllib
@@ -383,7 +384,7 @@ def polygonFromMask(maskedArr): # https://github.com/hazirbas/coco-json-converte
 
     return segmentation[0], [x, y, w, h], area
 
-def pred_to_tiff(objects,height,width,name=""):
+def pred_to_tiff(objects,height,width,size_filter=0,score_filter=0.,name=""):
     """
     Converts the annotation of an object dictionary into a tiff format (arrays).
     
@@ -397,6 +398,12 @@ def pred_to_tiff(objects,height,width,name=""):
 
     width : int
         The image width.
+    
+    size_filter : int
+        Remove detection objects with area below this threshold.
+    
+    score_filter : float
+        Remove detection objects with score below this threshold.
 
     name : string
         The output file name to save the masks.
@@ -420,6 +427,11 @@ def pred_to_tiff(objects,height,width,name=""):
         count += 1
         height = obj_dict['segmentation']['size'][0]
         width = obj_dict['segmentation']['size'][1]
+        score = obj_dict['score']
+
+        # Score filter
+        if score < score_filter:
+            continue
         
         maskedArr = mask.decode(obj_dict['segmentation'])
         poly_list = polygonFromMask(maskedArr)[0]
@@ -429,8 +441,13 @@ def pred_to_tiff(objects,height,width,name=""):
         
         contour_list = [[poly_list[i], poly_list[i+1]] for i in range(0,len(poly_list),2) ]
         nd_contour = np.array(contour_list).astype("int64")
-        contours.append(nd_contour)
         poly = Polygon(nd_contour)
+
+        # Area filter
+        if poly.area < size_filter:
+            continue
+
+        contours.append(nd_contour)
         areas.append(poly.area)
         object_id += 1
     
@@ -457,7 +474,9 @@ def pred_to_tiff(objects,height,width,name=""):
         cv2.fillPoly(masks,pts=[contour], color=object_id)
         object_id += 1
     
-    print(f"Broken polygons on inference (less than 3 coordinate points): {sum_}")
+    if sum_ > 0:
+        print(f"Broken polygons on inference (less than 3 coordinate points): {sum_}")
+
     if name != "":
         tifffile.imwrite(name, masks)
     return masks
@@ -551,7 +570,128 @@ def metrics(tp, fp, fn):
     return p,r,f1
 
 
-def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_path,size_filter=25,quiet=True):
+def simple_2d_metric_plot(x,y,color,xlabel,ylabel,name):
+    """
+    Create common global metric plot.
+    
+    Parameters
+    ----------
+    x : array(float)
+        Array containing the x-axis metrics data.
+
+    y : array(float)
+        Array containing the y-axis metrics data.
+
+    color : string
+        Histogram color.
+
+    xlabel : string
+        X label for the plot.
+
+    ylabel : string
+        Y label for the plot.
+
+    name : string
+        File name path to save the plot.
+    """
+    plt.plot(x,y,color=color)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.savefig(name)
+    plt.close()
+
+
+def histogram_metric_plot(data,color,xlabel,ylabel,name):
+    """
+    Create common global metric plot.
+    
+    Parameters
+    ----------
+    data : array(float)
+        Array containing the metric image.
+
+    color : string
+        Histogram color.
+
+    xlabel : string
+        X label for the plot.
+
+    ylabel : string
+        Y label for the plot.
+
+    name : string
+        File name path to save the plot.
+    """
+    plt.hist(data, color=color)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.savefig(name)
+    plt.close()
+
+
+def scatter_metric_plot(x,y,color,xlabel,ylabel,name):
+    """
+    Create common global metric plot.
+    
+    Parameters
+    ----------
+    x : array(float)
+        Array containing the x-axis metrics data.
+
+    y : array(float)
+        Array containing the y-axis metrics data.
+
+    color : string
+        Histogram color.
+
+    xlabel : string
+        X label for the plot.
+
+    ylabel : string
+        Y label for the plot.
+
+    name : string
+        File name path to save the plot.
+    """
+    plt.scatter(x,y,color=color)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.savefig(name)
+    plt.close()
+
+
+def inference_analysis_plots(results,output_path):
+    """
+    Create analysis plots for the inference analysis.
+    
+    Parameters
+    ----------
+    results : dictionary
+        Dictionary that contains the classification metrics per image.
+
+    output_path : string
+        Folder path to save the plots.
+    """
+    
+    precision,recall,f1,objs = [],[],[],[]
+    for i in range(len(results)-1):
+        precision = results[i]["precision"]
+        recall = results[i]["recall"]
+        f1 = results[i]["f1"]
+        objs = results[i]["gt_objects"]
+    
+    # Precision, recall and F1-score plots
+    histogram_metric_plot(precision,'orange','Precision','Counts',f"{output_path}/Precision_histogram.png")
+    histogram_metric_plot(recall,'orange','Recall','Counts',f"{output_path}/Recall_histogram.png")
+    histogram_metric_plot(f1,'orange','F1','Counts',f"{output_path}/F1-score_histogram.png")
+
+    # Precision, recall and F1-score per number of objects
+    scatter_metric_plot(objs,precision,'orange','Number of objects','Precision',f"{output_path}/Precision_vs_n_objects.png")
+    scatter_metric_plot(objs,recall,'orange','Number of objects','Recall',f"{output_path}/Recall_vs_n_objects.png")
+    scatter_metric_plot(objs,f1,'orange','Number of objects','F1',f"{output_path}/F1-score_vs_n_objects.png")
+    
+
+def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_path,size_filter=25,score_filter=0.35,quiet=True):
     """
     Analyze the performance of the object detection agains the ground truth objects of a completed dataset. Create
     the plots of the intersections between the GT and the inference objects and return the results per image.
@@ -573,6 +713,10 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
     size_filter : int
         Filter objecs smaller than this area (px^2).
 
+    score_filter : float
+        Filter objecs below a given score threshold. Best values found for MaskDINO are between
+        0.3 and 0.4.
+
     quiet : boolean
         Option to output information while running.
     
@@ -591,12 +735,15 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
     print(f" - Get predicted annotations")
     pred_anns = get_prediction_annotations(inf_annotations)
 
+    # Create folder for intersections
+    intersections_path = f"{output_path}/intersections"
+    os.system(f"mkdir {intersections_path}")
+
     # Initialize variables
     sum_tp, sum_fp, sum_fn = 0, 0, 0
-    all_prec, all_rec, all_f1 = [], [], []
     results = []
     print(f" - Comparison Loop:")
-    for (i,name) in split_ids[:2]:
+    for (i,name) in split_ids:
         print(f"   > {i}: {name}")
         # Get the annotations for this image id
         gt_ann = gt_anns[str(i)]
@@ -604,23 +751,18 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
 
         # Transform them to 2D arrays
         gt = annotation_poly_to_tiff(gt_ann,gt_ann['images'][0]['height'],gt_ann['images'][0]['width'],name="",ann_type="All")
-        pred = pred_to_tiff(pred_ann,gt_ann['images'][0]['height'],gt_ann['images'][0]['width'],name="")
+        pred = pred_to_tiff(pred_ann,gt_ann['images'][0]['height'],gt_ann['images'][0]['width'],size_filter,score_filter,name="")
         im = skimage.io.imread(f"{data_path}/{name}")
-        
-        # Filter small ones
-        pred = filter_size(pred,size_filter)
         
         # Extract metrics
         iou = get_iou(pred,gt,quiet)
         tp, fp, fn = precision_at(0.7, iou,quiet)
         precision, recall, f1 = metrics(sum(tp), sum(fp), sum(fn))
-        all_prec.append(precision)
-        all_rec.append(recall)
-        all_f1.append(f1)
 
         # Create intersection plots
         gt_per, gt_xor = get_intersections(gt,pred)
-        plot_intersections(gt,pred,gt_xor,im,f"{output_path}/intersections_{i}.png")
+        file_path = f"{intersections_path}/intersections_{i}-{name.split('.')[0]}.png"
+        plot_intersections(gt,pred,gt_xor,im,file_path)
         plt.close()
         if (not quiet):
             print(f"TP, FP, FN:  {sum(tp)}, {sum(fp)}, {sum(fn)}")
@@ -634,9 +776,12 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
         res = {
             "image":name,
             "image_id":i,
-            "tp":sum(tp),
-            "fp":sum(fp),
-            "fn":sum(fn),
+            "intersection_path":file_path,
+            "gt_objects":len(np.unique(gt))-1,
+            "detected_objects":len(np.unique(pred))-1,
+            "tp":int(sum(tp)),
+            "fp":int(sum(fp)),
+            "fn":int(sum(fn)),
             "precision":precision,
             "recall":recall,
             "f1":f1,
@@ -653,33 +798,105 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
     
     res = {
             "image":"all",
-            "image_id":None,
-            "tp":sum_tp,
-            "fp":sum_fp,
-            "fn":sum_fn,
+            "image_id":"",
+            "intersection_path":"",
+            "gt_objects":"",
+            "detected_objects":"",
+            "tp":int(sum_tp),
+            "fp":int(sum_fp),
+            "fn":int(sum_fn),
             "precision":gPrec,
             "recall":gRec,
             "f1":gF1,
         }
     results.append(res)
+    with open(f"{output_path}/results.json", 'w') as fRes:
+        json.dump(results, fRes)
 
-    # Precision, recall and F1 plots
-    plt.hist(all_prec, color='orange')
-    plt.ylabel('Counts')
-    plt.xlabel('Precision')
-    plt.savefig(f"{output_path}/global_precision.png")
-    plt.close()
-
-    plt.hist(all_rec, color='orange')
-    plt.ylabel('Counts')
-    plt.xlabel('Recall')
-    plt.savefig(f"{output_path}/global_recall.png")
-    plt.close()
-
-    plt.hist(all_f1, color='orange')
-    plt.ylabel('Counts')
-    plt.xlabel('F1')
-    plt.savefig(f"{output_path}/global_f1-score.png")
-    plt.close()
+    # Precision, recall, F1 and other plots
+    inference_analysis_plots(results,output_path)
 
     return results
+
+
+def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,output_path):
+    """
+    Create analysis for the inference analysis per cluster.
+    
+    Parameters
+    ----------
+    results : dictionary
+        Dictionary that contains the classification metrics per image.
+
+    cluster_file : string
+        File path for the csv file containing the clustering labels and image IDs.
+
+    cluster_column : string
+        Column name on the csv file containing the clustering labels.
+
+    image_column : string
+        Column name on the csv file containing the image IDs.
+
+    output_path : string
+        Folder path to save the plots.
+    
+    Returns
+    -------
+    df : pd.DataFrame
+        A dataframe of precision, recall and f1 score per cluster.
+    """
+    print(f" - Inference cluster analysis")
+    # Extract information from results
+    current_imgs = []
+    results_per_image = {}
+    for i in range(len(results)-1):
+        current_imgs.append(results[i]['image'])
+        results_per_image[results[i]['image']] = results[i]
+
+    # Read clustering file and extract clusters
+    df = pd.read_csv(cluster_file)
+    clusters = df[cluster_column].unique()
+    clusters.sort()
+
+    # Loop over clusters
+    p_arr,r_arr,f1_arr,c_arr = [],[],[],[]
+    for c in clusters:
+        # Extract cluster data as an array, filtered by the images we have available 
+        cdf = df[df[cluster_column] == c]
+        arr = np.array(cdf[cdf[image_column].isin(current_imgs)][image_column].to_list())
+        size = len(arr)
+        print(f"Size of cluster '{c}': {size}")
+        if size == 0:
+            continue
+
+        cluster_path = f"{output_path}/cluster_{c}"
+        os.system(f"mkdir {cluster_path}")
+        
+        # Extract TP, FP and FN per cluster
+        tp,fp,fn = 0,0,0
+        for img in arr:
+            tp += results_per_image[img]['tp']
+            fp += results_per_image[img]['fp']
+            fn += results_per_image[img]['fn']
+            os.system(f"cp {results_per_image[img]['intersection_path']} {cluster_path}")
+
+        # Extract precision, recall and f1 per cluster
+        precision,recall,f1 = metrics(tp,fp,fn)
+        p_arr.append(precision)
+        r_arr.append(recall)
+        f1_arr.append(f1)
+        c_arr.append(c)
+        print(f"Metrics (precis, recall, f1): {round(precision,2)}, {round(recall,2)}, {round(f1,2)}")
+    
+    # Precision, recall and F1-score per cluster
+    simple_2d_metric_plot(c_arr, p_arr, 'orange', 'Cluster', 'Precision', f"{output_path}/Precision_vs_cluster.png")
+    simple_2d_metric_plot(c_arr, r_arr, 'orange', 'Cluster', 'Recall', f"{output_path}/Recall_vs_cluster.png")
+    simple_2d_metric_plot(c_arr, f1_arr, 'orange', 'Cluster', 'F1', f"{output_path}/F1_vs_cluster.png")
+
+    df = pd.DataFrame(columns=['cluster','precision','recall','f1'])
+    df['cluster'] = c_arr
+    df['precision'] = p_arr
+    df['recall'] = r_arr
+    df['f1'] = f1_arr
+
+    return df

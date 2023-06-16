@@ -360,7 +360,7 @@ def create_split_cluster(
         cdf = df[df[cluster_column] == c]
         arr = np.array(cdf[cdf[image_column].isin(current_imgs)][image_column].to_list())
         size = len(arr)
-        print(f"Size of cluster {c}: {size}")
+        print(f"Size of cluster '{c}': {size}")
         if size == 0:
             continue
         for i in range(size):

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import urllib.request as urllib
 
 sys.path.append("../src")
-from inference import create_inference_analysis
+from inference import create_inference_analysis, inference_cluster_analysis
 
 # Create inference plots and extract metric results
 output_path = "output"                                                           # The output folder
@@ -12,6 +12,17 @@ gt_annotations = "../../cluster/split_test/validation_annotations.json"         
 inf_annotations = "../../6_full_200_split/inference/coco_instances_results.json" # File containing the inference annotations
 quiet_mode = True                                                                # Enable/disable information outputs
 size_filter = 25                                                                 # Filter detection objects smaller than <size> square pixels
+score_filter = 0.35                                                              # Filter detection objects with score below this threshold
 os.system(f"mkdir {output_path}")
 
-results = create_inference_analysis(data_path,gt_annotations,inf_annotations,output_path,size_filter=size_filter,quiet=quiet_mode)
+results = create_inference_analysis(
+    data_path,gt_annotations,inf_annotations,output_path,
+    size_filter=size_filter,score_filter=score_filter, quiet=quiet_mode)
+
+# Based on previous results, create an analysis per cluster
+cluster_file = "../data/Membrane_small_img_clusters.csv"                         # csv file with name of images and clustering labels
+cluster_column = 'PhenoGraph_clusters'                                           # column of csv related to clustering labels
+image_column = 'Images'                                                          # column of csv related to the name of images
+inference_cluster_analysis(
+    results,cluster_file=cluster_file,cluster_column=cluster_column,
+    image_column=image_column,output_path=output_path)
