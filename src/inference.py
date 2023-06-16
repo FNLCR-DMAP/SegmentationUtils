@@ -675,10 +675,10 @@ def inference_analysis_plots(results,output_path):
     
     precision,recall,f1,objs = [],[],[],[]
     for i in range(len(results)-1):
-        precision = results[i]["precision"]
-        recall = results[i]["recall"]
-        f1 = results[i]["f1"]
-        objs = results[i]["gt_objects"]
+        precision.append(results[i]["precision"])
+        recall.append(results[i]["recall"])
+        f1.append(results[i]["f1"])
+        objs.append(results[i]["gt_objects"])
     
     # Precision, recall and F1-score plots
     histogram_metric_plot(precision,'orange','Precision','Counts',f"{output_path}/Precision_histogram.png")
