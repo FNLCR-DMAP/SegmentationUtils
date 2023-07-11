@@ -2,33 +2,23 @@ import os, math, json
 import numpy as np
 import pandas as pd
 
-def coco_conversion(input_path,output_path):
-    # TO DO
-    return
-
 
 def validate_split(trainf,valf,testf,e=1e-5):
     """
-    The validate_split function is used to ensure that the sum of train, validation, and test fractions
-    is 1 within a given tolerance e. This helps guarantee that the proportions of the dataset are properly
-    allocated between the three sets. Checks whether it falls within the provided epsilon range
-    (i.e., between 1-e and 1+e). If the condition fails, an AssertionError is raised.
+    Validate the split fractions.
     
-    Parameters
-    ----------
-    trainf : float
-        Train fraction.
-
-    valf : float
-        Validation fraction.
-
-    testf : float
-        Test fraction.
-
-    e : float
-        Tolerance
+    Parameters:
+        trainf (float): The fraction of the training data.
+        valf (float): The fraction of the validation data.
+        testf (float): The fraction of the test data.
+        e (float, optional): A small epsilon value to account for floating point errors. Defaults to 1e-5.
+    
+    Raises:
+        AssertionError: If the sum of the fractions is not approximately equal to 1.
+    
+    Returns:
+        None
     """
-        
     fraction_sum = trainf + valf + testf
     assert fraction_sum < 1+e and fraction_sum > 1-e, \
         f"""Split fractions dont sum up to 1 (100%), please check fractions:
@@ -39,34 +29,18 @@ def validate_split(trainf,valf,testf,e=1e-5):
 
 def split_array(arr,size,vf,tf):
     """
-    This function splits the given array of image IDs into training, validation and testing subsets while trying
-    to maintain the percentages of each set.
-    
-    Parameters
-    ----------
-    arr : list(string)
-        Array containing the image IDs.
+    Split an array into training, validation, and testing sets.
 
-    size : int
-        Size of the array.
+    Parameters:
+        arr (list): The input array to be split.
+        size (int): The size of the input array.
+        vf (float): The validation set fraction.
+        tf (float): The test set fraction.
 
-    vf : float
-        Validation set fraction.
-
-    tf : float
-        Test set fraction.
-    
-    Returns
-    -------
-    train : list(string)
-        Array containing the image IDs for the training set.
-
-    val : list(string)
-        Array containing the image IDs for the validation set.
-
-    test : list(string)
-        Array containing the image IDs for the test set.
-
+    Returns:
+        train (list): The training set.
+        val (list): The validation set.
+        test (list): The testing set.
     """
     if size == 0:
         print(f"WARNING: Empty array.")
@@ -98,27 +72,16 @@ def split_array(arr,size,vf,tf):
 
 def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.json"):
     """
-    This function use the list of id files to read the coco format annotations of these ids and save
-    into a merged annotation file.
+    Creates annotations for a given input folder and writes them to an output file.
     
-    Parameters
-    ----------
-    input_folder : string
-        Folder path containing annotation files in coco format.
-
-    output_file : string
-        Name of the output file to save the merged annotations.
-
-    ids : list(string)
-        List of the image ids to include in the merged annotations.
-
-    annotation_suffix : string
-        In case the coco format annotations has a suffix after the name of the image (ID).
-    
-    Returns
-    -------
-    merged_data : dictionary
-        Coco format annotations containing all of the images and their annotations.
+    Parameters:
+        input_folder (str): The path to the folder containing the input files.
+        output_file (str): The path to the output file where the annotations will be written.
+        ids (list, optional): A list of specific ids to include in the annotations. Defaults to an empty list.
+        annotation_suffix (str, optional): The suffix for the annotation files. Defaults to "_coco.json".
+        
+    Returns:
+        dict: The merged data containing the images, annotations, and categories.
     """
     merged_data = {
         "images": [],
@@ -156,6 +119,7 @@ def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.
             annotation_id += 1
             merged_data["annotations"].append(annotation)
 
+    print(f"Created annotation file with {len(annotation_files)} images.")
     with open(output_file, 'w') as f:
         json.dump(merged_data, f)
     
@@ -164,42 +128,18 @@ def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.
 
 def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix):
     """
-    This function receives the image IDs (names) of each of the split sets and returns the merged coco format
-    annotation files for each of the sets.
-    
-    Parameters
-    ----------
-    train_ids : list(string)
-        Array containing the list of image IDs for the training set.
+    Create split annotations.
 
-    val_ids : list(string)
-        Array containing the list of image IDs for the validation set.
+    Parameters:
+        train_ids (list): List of training ids.
+        val_ids (list): List of validation ids.
+        test_ids (list): List of testing ids.
+        annotations_path (str): Path to the annotations file.
+        output_path (str): Path to the output directory.
+        annotation_suffix (str): Annotation suffix.
 
-    test_ids : list(string)
-        Array containing the list of image IDs for the test set.
-
-    annotations_path : string
-        Folder path containing the annotation files in coco format.
-
-    output_path : string
-        Folder path where the dictionaries of the merged annotations will be saved.
-
-    annotation_suffix : string
-        In case the coco format annotations has a suffix after the name of the image (ID).
-    
-    Returns
-    -------
-    config : dictionary
-        Dictionary containing the image IDs for each set.
-
-    train_ann : dictionary
-        Coco format annotations for all of the training images and their annotations.
-
-    val_ann : dictionary
-        Coco format annotations for all of the validation images and their annotations.
-
-    test_ann : dictionary
-        Coco format annotations for all of the testing images and their annotations.
+    Returns:
+        tuple: A tuple containing the split configuration and the merged annotations for training, validation, and testing.
     """
     # Print split sizes
     print(f" > Split sizes:")
@@ -230,43 +170,70 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
     
     return config, train_ann, val_ann, test_ann
 
+
+def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_train_only=True):
+    """
+    Augments the given IDs with additional IDs from the augmented_path directory.
+    
+    Parameters:
+        train_ids (list): The list of train IDs.
+        val_ids (list): The list of validation IDs.
+        test_ids (list): The list of test IDs.
+        augmented_path (str): The path to the directory containing augmented files.
+        annotation_suffix (str): The suffix of annotated files.
+    
+    Returns:
+        tuple: A tuple containing the augmented train IDs, augmented validation IDs, 
+               and augmented test IDs.
+    """
+    aug_train_ids, aug_val_ids, aug_test_ids = [], [], []
+    augmented_files = [f[:-len(annotation_suffix)] for f in os.listdir(augmented_path) if f.endswith(annotation_suffix)]
+    for tid in train_ids:
+        to_include = [a for a in augmented_files if a.startswith(tid)]
+        if len(to_include) > 0:
+            aug_train_ids.extend(to_include)
+    
+    for vid in val_ids:
+        to_include = [a for a in augmented_files if a.startswith(vid)]
+        if len(to_include) > 0:
+            if aug_train_only:
+                to_include.sort()
+                aug_val_ids.append(to_include[-1])
+            else:
+                aug_val_ids.extend(to_include)
+    for tid in test_ids:
+        to_include = [a for a in augmented_files if a.startswith(tid)]
+        if len(to_include) > 0:
+            if aug_train_only:
+                to_include.sort()
+                aug_test_ids.append(to_include[-1])
+            else:
+                aug_test_ids.extend(to_include)
+    return aug_train_ids, aug_val_ids, aug_test_ids
+
+
 def create_split(
         annotations_path,
         output_path         = "output",
         annotation_suffix   = "_coco.json",
         train_fraction      = 0.7,
         validation_fraction = 0.2,
-        test_fraction       = 0.1):
+        test_fraction       = 0.1,
+        augmented_path      = None):
     """
-    This function creates the split of a set of images based on a folder containing the annotations,
-    the suffix of the annotation file names, the output path and the fractions of the split. It saves
-    the coco format annotation dictionaries as a JSON file inside the output path but also return them
-    for the user as dictionaries.
-    
-    Parameters
-    ----------
-    annotations_path : string
-        Folder path containing the annotation files in coco format.
+    Create a train/validation/test split of annotation files.
 
-    output_path : string
-        Folder path where the dictionaries of the merged annotations will be saved.
+    Parameters:
+        annotations_path (str): The path to the directory containing the annotation files.
+        output_path (str, optional): The output path for the split annotations. Defaults to "output".
+        annotation_suffix (str, optional): The suffix of the annotation files. Defaults to "_coco.json".
+        train_fraction (float, optional): The fraction of data to be included in the training set. Defaults to 0.7.
+        validation_fraction (float, optional): The fraction of data to be included in the validation set. Defaults to 0.2.
+        test_fraction (float, optional): The fraction of data to be included in the test set. Defaults to 0.1.
+        augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
 
-    annotation_suffix : string
-        In case the coco format annotations has a suffix after the name of the image (ID).
-
-    train_fraction : float
-        Train set fraction.
-
-    validation_fraction : float
-        Validation set fraction.
-
-    test_fraction : float
-        Test set fraction.
-    
-    Returns
-    -------
-    create_split_annotations : function
-        Returns the merged coco format annotation files (dictionary) for each of the sets.
+    Returns:
+        The annotations for the split, based on the specified fractions.
     """
     # Validate fractions
     validate_split(train_fraction,validation_fraction,test_fraction)
@@ -285,6 +252,9 @@ def create_split(
     train_ids, val_ids, test_ids = split_array(arr,size,validation_fraction,test_fraction)
 
     # Create the annotations based on the split
+    if augmented_path is not None:
+        train_ids,val_ids,test_ids = augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix)
+        annotations_path = augmented_path
     return create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix)
 
 
@@ -297,45 +267,25 @@ def create_split_cluster(
         annotation_suffix   = "_coco.json",
         train_fraction      = 0.7,
         validation_fraction = 0.2,
-        test_fraction       = 0.1):
+        test_fraction       = 0.1,
+        augmented_path      = None):
     """
-    This function creates the split of a set of images based on a csv file containing the clustering
-    analysis labels for all of the image IDs to be used. It saves the coco format annotation dictionaries
-    as a JSON file inside the output path but also return them for the user as dictionaries.
+    Create split clusters based on a clustering file and annotation images.
     
-    Parameters
-    ----------
-    cluster_file : string
-        File path for the csv file containing the clustering labels and image IDs.
-
-    cluster_column : string
-        Column name on the csv file containing the clustering labels.
-
-    image_column : string
-        Column name on the csv file containing the image IDs.
-
-    annotations_path : string
-        Folder path containing the annotation files in coco format.
-
-    output_path : string
-        Folder path where the dictionaries of the merged annotations will be saved.
-
-    annotation_suffix : string
-        In case the coco format annotations has a suffix after the name of the image (ID).
-
-    train_fraction : float
-        Train set fraction.
-
-    validation_fraction : float
-        Validation set fraction.
-
-    test_fraction : float
-        Test set fraction.
+    Parameters:
+        cluster_file (str): Path to the clustering file (default is "Membrane_small_img_clusters.csv").
+        cluster_column (str): Name of the column in the clustering file that contains the cluster labels (default is "PhenoGraph_clusters").
+        image_column (str): Name of the column in the clustering file that contains the image filenames (default is "Images").
+        annotations_path (str): Path to the directory containing the annotation images.
+        output_path (str): Path to the directory where the split clusters will be saved (default is "output").
+        annotation_suffix (str): Suffix of the annotation image files (default is "_coco.json").
+        train_fraction (float): Fraction of the data to use for training (default is 0.7).
+        validation_fraction (float): Fraction of the data to use for validation (default is 0.2).
+        test_fraction (float): Fraction of the data to use for testing (default is 0.1).
+        augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
     
-    Returns
-    -------
-    create_split_annotations : function
-        Returns the merged coco format annotation files (dictionary) for each of the sets.
+    Returns:
+        str: Path to the created split annotations file.
     """
     # Validate fractions
     validate_split(train_fraction,validation_fraction,test_fraction)
@@ -376,24 +326,21 @@ def create_split_cluster(
         test_ids.extend(test_s)
 
     # Create the annotations based on the split
+    if augmented_path is not None:
+        train_ids,val_ids,test_ids = augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix)
+        annotations_path = augmented_path
     return create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix)
 
 
 def get_split_ids(f):
     """
-    This function extract specific pieces of information from the given JSON file "f". Specifically,
-    the script focuses on retrieving two pieces of data - the 'ID' field and 'filename' field
-    associated with every item listed under the "Images" key in the main JSON structure.
-    
-    Parameters
-    ----------
-    f : string
-        The JSON file name.
+    Reads a JSON file and extracts the 'id' and 'file_name' values from each image object.
 
-    Returns
-    -------
-    data : array of string tuples
-        The extracted image id and file name for each image item within the file.
+    Parameters:
+        f (str): The path to the JSON file.
+
+    Returns:
+        list: A list of tuples containing the 'id' and 'file_name' values for each image.
     """
     with open(f,'r') as file:
         ann = json.load(file)
