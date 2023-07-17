@@ -6,13 +6,13 @@ sys.path.append("../src")
 from pyoseg.inference import create_inference_analysis, inference_cluster_analysis
 
 # Create inference plots and extract metric results
-output_path = "output"                                                           # The output folder
-data_path = "../data/full_data"                                                  # Folder where the image data are located
-gt_annotations = "../../old/cluster/split_test/train_annotations.json"      # File containing the GT annotations
-inf_annotations = "../../10_full_200000/inference_train/coco_instances_results.json" # File containing the inference annotations
+output_path = "../../11_aug_75000_analysis"                                      # The output folder
+data_path = "../data/aug_data"                                                   # Folder where the image data are located
+gt_annotations = "../data/aug_data_split/validation_annotations.json"            # File containing the GT annotations
+inf_annotations = "../../11_aug_75000/inference_5k/coco_instances_results.json"  # File containing the inference annotations
 quiet_mode = True                                                                # Enable/disable information outputs
 size_filter = 25                                                                 # Filter detection objects smaller than <size> square pixels
-score_filter = 0.35#35                                                              # Filter detection objects with score below this threshold
+score_filter = 0.35                                                              # Filter detection objects with score below this threshold
 nms_threshold = 0.2                                                              # Non-Maximum Suppression threshold
 os.system(f"mkdir {output_path}")
 

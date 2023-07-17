@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import urllib.request as urllib
 import pycocotools.mask as mask
 import seaborn as sns
 import json
@@ -152,7 +151,7 @@ def plot_gt_image(img,gt,name='gt.png'):
     fig, ax = plt.subplots(1,1, figsize=(32,32))
     fig.tight_layout(pad=-2.6)
     nuclei_cmap = "gist_ncar"
-    inf_alpha = 0.1
+    inf_alpha = 0.8
         
     # Cconvert zero to black color in gitst_ncar
     if nuclei_cmap == "gist_ncar":
@@ -167,8 +166,8 @@ def plot_gt_image(img,gt,name='gt.png'):
         newcmp = ListedColormap(newcolors)
         nuclei_cmap = newcmp
         
-        ax.imshow(image, cmap=plt.cm.gray)
-        ax.imshow(gt, cmap=nuclei_cmap, alpha=inf_alpha)
+        ax.imshow(gt, cmap=nuclei_cmap)
+        ax.imshow(image, cmap=plt.cm.gray, alpha=inf_alpha)
 
         # Turn off axis and y axis
         ax.get_xaxis().set_visible(False)
@@ -428,7 +427,15 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
             contour_j = sorted_contours[j]
             poly_j = Polygon(contour_j)
 
-            polygon_intersection = poly_i.intersection(poly_j).area
+            try:
+                polygon_intersection = poly_i.intersection(poly_j).area
+            except:
+                poly_i = poly_i.buffer(0)
+                poly_j = poly_j.buffer(0)
+                try:
+                    polygon_intersection = poly_i.intersection(poly_j).area
+                except:
+                    continue
             if polygon_intersection == 0:
                 continue
             polygon_union = poly_i.union(poly_j).area

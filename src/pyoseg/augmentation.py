@@ -2,20 +2,20 @@ import os, math, json, random
 import numpy as np
 import pandas as pd
 import cv2
-from albumentations import RandomRotate90, GridDistortion, HorizontalFlip, VerticalFlip, Defocus, Blur
-from albumentations.augmentations.crops.transforms import RandomCrop
+import albumentations as A
+from albumentations import RandomRotate90, GridDistortion, HorizontalFlip, VerticalFlip, Defocus, Blur, RandomBrightnessContrast, RandomGamma
 from pyoseg.inference import annotation_poly_to_tiff, plot_gt_image
 from PIL import Image
 import pycocotools.mask as cocomask
 
 augmentations = {
-    "HorizontalFlip": HorizontalFlip(p=1.),
-    "VerticalFlip": VerticalFlip(p=1.),
-    "RandomRotate90": RandomRotate90(p=1.),
-    "GridDistortion": GridDistortion(p=1.),
-    "Defocus": Defocus(p=1.),
-    "Blur": Blur(p=1.),
-    #"RandomCrop":RandomCrop(p=1.,height=256,width=256)
+    "HorizontalFlip": HorizontalFlip(p=.3),
+    "VerticalFlip": VerticalFlip(p=.3),
+    "RandomRotate90": RandomRotate90(p=.4),
+    "GridDistortion": GridDistortion(p=.3, normalized=True),
+    "Blur": Blur(p=.05),
+    "RandomBrightnessContrast": RandomBrightnessContrast(p=.5),
+    "RandomGamma": RandomGamma(p=.4)
 }
 
 
@@ -75,7 +75,20 @@ def get_images_and_masks(data_path, annotations_path, annotation_suffix = "_coco
     return images, masks, extension
 
 
-def augment_data(data_path, annotations_path, output_path, annotation_suffix = "_coco.json", functions = augmentations.keys()):
+def create_augmentation_transform(functions = augmentations.keys()):
+    """
+    Create an augmentation model using a list of selected augmentation functions.
+
+    Parameters:
+        functions (list): A list of augmentation function names. Defaults to all available augmentation functions.
+
+    Returns:
+        transform: The composed augmentation transform.
+    """
+    return A.Compose([augmentations[f] for f in functions])
+
+
+def augment_data(data_path, annotations_path, output_path, annotation_suffix = "_coco.json", functions = augmentations.keys(), times = 10):
     """
     Augments data by applying a list of specified augmentation functions to the images and masks.
 
@@ -85,6 +98,7 @@ def augment_data(data_path, annotations_path, output_path, annotation_suffix = "
         output_path (str): Path to the directory where the augmented images and masks will be saved.
         annotation_suffix (str, optional): Suffix to be appended to the mask filenames. Defaults to "_coco.json".
         functions (list, optional): List of augmentation functions to be applied. Defaults to ["RandomCrop"].
+        times (int, optional): Number of times to apply the augmentation functions. Defaults to 10.
 
     Raises:
         AssertionError: If any of the specified augmentation functions are invalid.
@@ -93,9 +107,11 @@ def augment_data(data_path, annotations_path, output_path, annotation_suffix = "
         None
     """
     assert [i in functions for i in augmentations.keys()], "Please provide a valid augmentation function."
+    transform = create_augmentation_transform(functions)
 
     images, masks, extension = get_images_and_masks(data_path, annotations_path, annotation_suffix)
     dataset_size = len(images)
+    dataset_size = 1
 
     for i in range(dataset_size):
         print(f"Augmenting image {i+1}/{dataset_size}:")
@@ -105,7 +121,7 @@ def augment_data(data_path, annotations_path, output_path, annotation_suffix = "
         image = cv2.imread(f"{data_path}/{image_i}", cv2.IMREAD_COLOR)
         mask0 = read_annotation_file(f"{annotations_path}/{mask_i}")
 
-        n_aug = len(functions)
+        n_aug = times
         mask0["images"][0]['file_name'] = f"{images[i]}_aug{n_aug}{extension}"
 
         cv2.imwrite(f"{output_path}/{images[i]}_aug{n_aug}{extension}", image)
@@ -118,9 +134,9 @@ def augment_data(data_path, annotations_path, output_path, annotation_suffix = "
         output_images, output_masks = [],[]
         masks0 = mask_array(mask0)
 
-        for f in functions:
+        for t in range(times):
             masks = masks0.copy()
-            augmented = augmentations[f](image=image, masks=masks)
+            augmented = transform(image=image, masks=masks)
             output_images.append(augmented['image'])
             output_masks.append(augmented['masks'])
 
