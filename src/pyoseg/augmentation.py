@@ -111,7 +111,6 @@ def augment_data(data_path, annotations_path, output_path, annotation_suffix = "
 
     images, masks, extension = get_images_and_masks(data_path, annotations_path, annotation_suffix)
     dataset_size = len(images)
-    dataset_size = 1
 
     for i in range(dataset_size):
         print(f"Augmenting image {i+1}/{dataset_size}:")

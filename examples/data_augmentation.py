@@ -11,7 +11,6 @@ data_path = "../data/full_data/"                         # path for the images f
 output_path = "test_augmentation"                        # path for output folder
 os.system(f"mkdir {output_path}")
 augment_data(data_path=data_path, annotations_path=annotations_path, output_path=output_path)
-sys.exit()
 
 # Extend current dataset with data augmentation
 print(f"\n - Augmenting data")
