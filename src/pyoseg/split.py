@@ -2,7 +2,6 @@ import os, math, json
 import numpy as np
 import pandas as pd
 
-
 def validate_split(trainf,valf,testf,e=1e-5):
     """
     Validate the split fractions.
@@ -20,11 +19,8 @@ def validate_split(trainf,valf,testf,e=1e-5):
         None
     """
     fraction_sum = trainf + valf + testf
-    assert fraction_sum < 1+e and fraction_sum > 1-e, \
-        f"""Split fractions dont sum up to 1 (100%), please check fractions:
-        Train: {trainf}
-        Validation: {valf}
-        Test: {testf}"""
+    if not (fraction_sum < 1+e and fraction_sum > 1-e):
+        raise ValueError(f"""Split fractions dont sum up to 1 (100%), please check fractions:\nTrain: {trainf}\nValidation: {valf}\nTest: {testf}""")
 
 
 def split_array(arr,size,vf,tf):
@@ -55,7 +51,8 @@ def split_array(arr,size,vf,tf):
         n_train = size - n_test - n_val
         i_val = n_train + n_val
         i_test = i_val + n_test
-        assert i_test == size, "The sum over split sets is not the total number of elements."
+        if i_test != size:
+            raise ValueError(f"The sum over split sets is not the total number of elements.")
 
         train = arr[:n_train]
         val = arr[n_train:i_val]
@@ -70,14 +67,14 @@ def split_array(arr,size,vf,tf):
         return train, val, test
 
 
-def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.json"):
+def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coco.json"):
     """
     Creates annotations for a given input folder and writes them to an output file.
     
     Parameters:
         input_folder (str): The path to the folder containing the input files.
         output_file (str): The path to the output file where the annotations will be written.
-        ids (list, optional): A list of specific ids to include in the annotations. Defaults to an empty list.
+        ids (list, optional): A list of specific ids to include in the annotations. Defaults to None.
         annotation_suffix (str, optional): The suffix for the annotation files. Defaults to "_coco.json".
         
     Returns:
@@ -89,8 +86,8 @@ def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.
         "categories": []
     }
 
-    annotation_files = [f for f in os.listdir(input_folder) if f.endswith('.json')]
-    if len(ids) > 0:
+    annotation_files = [f for f in os.listdir(input_folder) if f.endswith(annotation_suffix)]
+    if ids is not None:
         fann = []
         to_rm = len(annotation_suffix)
         for a in annotation_files:
@@ -101,23 +98,27 @@ def create_annotations(input_folder,output_file,ids=[],annotation_suffix="_coco.
     annotation_id = 1
     image_id = 1
 
-    for file in annotation_files:
-        with open(os.path.join(input_folder, file), 'r') as f:
-            data = json.load(f)
+    if ids is None or len(ids) != 0:
+        if len(annotation_files) == 0:
+            raise FileNotFoundError("No annotation files found in input folder.")
+        
+        for file in annotation_files:
+            with open(os.path.join(input_folder, file), 'r') as f:
+                data = json.load(f)
 
-        if not merged_data["categories"]:
-            merged_data["categories"] = data["categories"]
+            if not merged_data["categories"]:
+                merged_data["categories"] = data["categories"]
 
-        for image in data["images"]:
-            image["id"] = image_id
-            merged_data["images"].append(image)
-            image_id += 1
+            for image in data["images"]:
+                image["id"] = image_id
+                merged_data["images"].append(image)
+                image_id += 1
 
-        for annotation in data["annotations"]:
-            annotation["id"] = annotation_id
-            annotation["image_id"] = annotation["image_id"] + (image_id - 1)
-            annotation_id += 1
-            merged_data["annotations"].append(annotation)
+            for annotation in data["annotations"]:
+                annotation["id"] = annotation_id
+                annotation["image_id"] = annotation["image_id"] + (image_id - 1)
+                annotation_id += 1
+                merged_data["annotations"].append(annotation)
 
     print(f"Created annotation file with {len(annotation_files)} images.")
     with open(output_file, 'w') as f:
@@ -142,10 +143,6 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
         tuple: A tuple containing the split configuration and the merged annotations for training, validation, and testing.
     """
     # Print split sizes
-    print(f" > Split sizes:")
-    print(f"Training split size:        {len(train_ids)}")
-    print(f"Validation split size:      {len(val_ids)}")
-    print(f"Testing split size:         {len(test_ids)}")
 
     # Save split into a json file
     config = {'train_ids':train_ids, 'val_ids':val_ids, 'test_ids':test_ids}
@@ -153,20 +150,17 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
         json.dump(config, outfile, indent=4)
     
     # Create the merged annotation file for each set
+    print(f" > Split sizes:")
+    print(f"Training split size:         {len(train_ids)}")
     train_ann = create_annotations(annotations_path, f"{output_path}/train_annotations.json",      train_ids, annotation_suffix)
+    print(f"Validation split size:       {len(val_ids)}")
     val_ann   = create_annotations(annotations_path, f"{output_path}/validation_annotations.json", val_ids,   annotation_suffix)
+    print(f"Testing split size:          {len(test_ids)}")
     test_ann  = create_annotations(annotations_path, f"{output_path}/test_annotations.json",       test_ids,  annotation_suffix)
 
-    # Print merged size
-    print(f" > Annotation sizes:")
-    print(f"Annotations for training:   {len(train_ann['images'])}")
-    print(f"Annotations for validation: {len(val_ann['images'])}")
-    print(f"Annotations for testing:    {len(test_ann['images'])}")
-
     # Assert that split size and merged size are the same
-    assert len(train_ids) == len(train_ann['images']), "Expected number of ids for training is different than what was obtained in merging annotation files, please check."
-    assert len(val_ids)   == len(val_ann['images']),   "Expected number of ids for validation is different than what was obtained in merging annotation files, please check."
-    assert len(test_ids)  == len(test_ann['images']),  "Expected number of ids for testing is different than what was obtained in merging annotation files, please check."
+    if len(train_ids) != len(train_ann['images']) or len(val_ids) != len(val_ann['images']) or len(test_ids) != len(test_ann['images']):
+        raise ValueError("Expected number of ids for training, validation and testing is different than what was obtained while merging annotation files.")
     
     return config, train_ann, val_ann, test_ann
 
@@ -191,21 +185,23 @@ def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_
     for tid in train_ids:
         to_include = [a for a in augmented_files if a.startswith(tid)]
         if len(to_include) > 0:
+            to_include.sort()
             aug_train_ids.extend(to_include)
     
     for vid in val_ids:
         to_include = [a for a in augmented_files if a.startswith(vid)]
         if len(to_include) > 0:
+            to_include.sort()
             if aug_train_only:
-                to_include.sort()
                 aug_val_ids.append(to_include[-1])
             else:
                 aug_val_ids.extend(to_include)
+
     for tid in test_ids:
         to_include = [a for a in augmented_files if a.startswith(tid)]
         if len(to_include) > 0:
+            to_include.sort()
             if aug_train_only:
-                to_include.sort()
                 aug_test_ids.append(to_include[-1])
             else:
                 aug_test_ids.extend(to_include)
@@ -219,6 +215,7 @@ def create_split(
         train_fraction      = 0.7,
         validation_fraction = 0.2,
         test_fraction       = 0.1,
+        seed                = None,
         augmented_path      = None):
     """
     Create a train/validation/test split of annotation files.
@@ -231,6 +228,7 @@ def create_split(
         validation_fraction (float, optional): The fraction of data to be included in the validation set. Defaults to 0.2.
         test_fraction (float, optional): The fraction of data to be included in the test set. Defaults to 0.1.
         augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
+        seed (int): The seed for the random number generator. Defaults to None.
 
     Returns:
         The annotations for the split, based on the specified fractions.
@@ -246,6 +244,7 @@ def create_split(
         arr[i] = arr[i][:-to_rm]
 
     # Shuffle the array
+    np.random.seed(seed)
     np.random.shuffle(arr)
 
     # Split the array
@@ -268,6 +267,7 @@ def create_split_cluster(
         train_fraction      = 0.7,
         validation_fraction = 0.2,
         test_fraction       = 0.1,
+        seed                = None,
         augmented_path      = None):
     """
     Create split clusters based on a clustering file and annotation images.
@@ -282,6 +282,7 @@ def create_split_cluster(
         train_fraction (float): Fraction of the data to use for training (default is 0.7).
         validation_fraction (float): Fraction of the data to use for validation (default is 0.2).
         test_fraction (float): Fraction of the data to use for testing (default is 0.1).
+        seed (int): The seed for the random number generator. Defaults to None.
         augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
     
     Returns:
@@ -317,6 +318,7 @@ def create_split_cluster(
             arr[i] = arr[i].split(".")[0]
 
         # Shuffle the array
+        np.random.seed(seed)
         np.random.shuffle(arr)
 
         # Split the array into groups
