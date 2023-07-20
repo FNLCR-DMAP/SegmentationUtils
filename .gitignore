@@ -4,6 +4,8 @@ __pycache__/
 # Temporary
 .tmp/
 
+# Tests
+
 # Environments
 .env
 .venv
