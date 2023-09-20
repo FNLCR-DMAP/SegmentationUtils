@@ -12,3 +12,7 @@ ENV PATH /opt/conda/envs/env/bin:$PATH
 
 # Install the requirements
 RUN pip install -r requirements.txt
+
+RUN conda install -c anaconda git
+
+CMD ["bash"]
