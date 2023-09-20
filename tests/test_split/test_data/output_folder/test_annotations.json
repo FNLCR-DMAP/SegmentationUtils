@@ -1,0 +1,1 @@
+{"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}

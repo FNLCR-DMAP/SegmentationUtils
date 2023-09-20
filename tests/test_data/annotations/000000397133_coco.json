@@ -1,0 +1,808 @@
+{
+    "info": {
+        "description": "COCO 2017 Stuff Dataset",
+        "url": "http://cocodataset.org",
+        "version": "1.0",
+        "year": 2017,
+        "contributor": "H. Caesar, J. Uijlings, M. Maire, T.-Y. Lin, P. Dollar and V. Ferrari",
+        "date_created": "2017-08-31 00:00:00.0"
+    },
+    "images": [
+        {
+            "license": 4,
+            "file_name": "000000397133.jpg",
+            "coco_url": "http://images.cocodataset.org/val2017/000000397133.jpg",
+            "height": 427,
+            "width": 640,
+            "date_captured": "2013-11-14 17:02:52",
+            "flickr_url": "http://farm7.staticflickr.com/6116/6255196340_da26cf2c9e_z.jpg",
+            "id": 397133
+        }
+    ],
+    "licenses": [
+        {
+            "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+            "id": 1,
+            "name": "Attribution-NonCommercial-ShareAlike License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+            "id": 2,
+            "name": "Attribution-NonCommercial License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+            "id": 3,
+            "name": "Attribution-NonCommercial-NoDerivs License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by/2.0/",
+            "id": 4,
+            "name": "Attribution License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+            "id": 5,
+            "name": "Attribution-ShareAlike License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+            "id": 6,
+            "name": "Attribution-NoDerivs License"
+        },
+        {
+            "url": "http://flickr.com/commons/usage/",
+            "id": 7,
+            "name": "No known copyright restrictions"
+        },
+        {
+            "url": "http://www.usa.gov/copyright.shtml",
+            "id": 8,
+            "name": "United States Government Work"
+        }
+    ],
+    "categories": [
+        {
+            "supercategory": "textile",
+            "id": 92,
+            "name": "banner"
+        },
+        {
+            "supercategory": "textile",
+            "id": 93,
+            "name": "blanket"
+        },
+        {
+            "supercategory": "plant",
+            "id": 94,
+            "name": "branch"
+        },
+        {
+            "supercategory": "building",
+            "id": 95,
+            "name": "bridge"
+        },
+        {
+            "supercategory": "building",
+            "id": 96,
+            "name": "building-other"
+        },
+        {
+            "supercategory": "plant",
+            "id": 97,
+            "name": "bush"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 98,
+            "name": "cabinet"
+        },
+        {
+            "supercategory": "structural",
+            "id": 99,
+            "name": "cage"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 100,
+            "name": "cardboard"
+        },
+        {
+            "supercategory": "floor",
+            "id": 101,
+            "name": "carpet"
+        },
+        {
+            "supercategory": "ceiling",
+            "id": 102,
+            "name": "ceiling-other"
+        },
+        {
+            "supercategory": "ceiling",
+            "id": 103,
+            "name": "ceiling-tile"
+        },
+        {
+            "supercategory": "textile",
+            "id": 104,
+            "name": "cloth"
+        },
+        {
+            "supercategory": "textile",
+            "id": 105,
+            "name": "clothes"
+        },
+        {
+            "supercategory": "sky",
+            "id": 106,
+            "name": "clouds"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 107,
+            "name": "counter"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 108,
+            "name": "cupboard"
+        },
+        {
+            "supercategory": "textile",
+            "id": 109,
+            "name": "curtain"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 110,
+            "name": "desk-stuff"
+        },
+        {
+            "supercategory": "ground",
+            "id": 111,
+            "name": "dirt"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 112,
+            "name": "door-stuff"
+        },
+        {
+            "supercategory": "structural",
+            "id": 113,
+            "name": "fence"
+        },
+        {
+            "supercategory": "floor",
+            "id": 114,
+            "name": "floor-marble"
+        },
+        {
+            "supercategory": "floor",
+            "id": 115,
+            "name": "floor-other"
+        },
+        {
+            "supercategory": "floor",
+            "id": 116,
+            "name": "floor-stone"
+        },
+        {
+            "supercategory": "floor",
+            "id": 117,
+            "name": "floor-tile"
+        },
+        {
+            "supercategory": "floor",
+            "id": 118,
+            "name": "floor-wood"
+        },
+        {
+            "supercategory": "plant",
+            "id": 119,
+            "name": "flower"
+        },
+        {
+            "supercategory": "water",
+            "id": 120,
+            "name": "fog"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 121,
+            "name": "food-other"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 122,
+            "name": "fruit"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 123,
+            "name": "furniture-other"
+        },
+        {
+            "supercategory": "plant",
+            "id": 124,
+            "name": "grass"
+        },
+        {
+            "supercategory": "ground",
+            "id": 125,
+            "name": "gravel"
+        },
+        {
+            "supercategory": "ground",
+            "id": 126,
+            "name": "ground-other"
+        },
+        {
+            "supercategory": "solid",
+            "id": 127,
+            "name": "hill"
+        },
+        {
+            "supercategory": "building",
+            "id": 128,
+            "name": "house"
+        },
+        {
+            "supercategory": "plant",
+            "id": 129,
+            "name": "leaves"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 130,
+            "name": "light"
+        },
+        {
+            "supercategory": "textile",
+            "id": 131,
+            "name": "mat"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 132,
+            "name": "metal"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 133,
+            "name": "mirror-stuff"
+        },
+        {
+            "supercategory": "plant",
+            "id": 134,
+            "name": "moss"
+        },
+        {
+            "supercategory": "solid",
+            "id": 135,
+            "name": "mountain"
+        },
+        {
+            "supercategory": "ground",
+            "id": 136,
+            "name": "mud"
+        },
+        {
+            "supercategory": "textile",
+            "id": 137,
+            "name": "napkin"
+        },
+        {
+            "supercategory": "structural",
+            "id": 138,
+            "name": "net"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 139,
+            "name": "paper"
+        },
+        {
+            "supercategory": "ground",
+            "id": 140,
+            "name": "pavement"
+        },
+        {
+            "supercategory": "textile",
+            "id": 141,
+            "name": "pillow"
+        },
+        {
+            "supercategory": "plant",
+            "id": 142,
+            "name": "plant-other"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 143,
+            "name": "plastic"
+        },
+        {
+            "supercategory": "ground",
+            "id": 144,
+            "name": "platform"
+        },
+        {
+            "supercategory": "ground",
+            "id": 145,
+            "name": "playingfield"
+        },
+        {
+            "supercategory": "structural",
+            "id": 146,
+            "name": "railing"
+        },
+        {
+            "supercategory": "ground",
+            "id": 147,
+            "name": "railroad"
+        },
+        {
+            "supercategory": "water",
+            "id": 148,
+            "name": "river"
+        },
+        {
+            "supercategory": "ground",
+            "id": 149,
+            "name": "road"
+        },
+        {
+            "supercategory": "solid",
+            "id": 150,
+            "name": "rock"
+        },
+        {
+            "supercategory": "building",
+            "id": 151,
+            "name": "roof"
+        },
+        {
+            "supercategory": "textile",
+            "id": 152,
+            "name": "rug"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 153,
+            "name": "salad"
+        },
+        {
+            "supercategory": "ground",
+            "id": 154,
+            "name": "sand"
+        },
+        {
+            "supercategory": "water",
+            "id": 155,
+            "name": "sea"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 156,
+            "name": "shelf"
+        },
+        {
+            "supercategory": "sky",
+            "id": 157,
+            "name": "sky-other"
+        },
+        {
+            "supercategory": "building",
+            "id": 158,
+            "name": "skyscraper"
+        },
+        {
+            "supercategory": "ground",
+            "id": 159,
+            "name": "snow"
+        },
+        {
+            "supercategory": "solid",
+            "id": 160,
+            "name": "solid-other"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 161,
+            "name": "stairs"
+        },
+        {
+            "supercategory": "solid",
+            "id": 162,
+            "name": "stone"
+        },
+        {
+            "supercategory": "plant",
+            "id": 163,
+            "name": "straw"
+        },
+        {
+            "supercategory": "structural",
+            "id": 164,
+            "name": "structural-other"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 165,
+            "name": "table"
+        },
+        {
+            "supercategory": "building",
+            "id": 166,
+            "name": "tent"
+        },
+        {
+            "supercategory": "textile",
+            "id": 167,
+            "name": "textile-other"
+        },
+        {
+            "supercategory": "textile",
+            "id": 168,
+            "name": "towel"
+        },
+        {
+            "supercategory": "plant",
+            "id": 169,
+            "name": "tree"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 170,
+            "name": "vegetable"
+        },
+        {
+            "supercategory": "wall",
+            "id": 171,
+            "name": "wall-brick"
+        },
+        {
+            "supercategory": "wall",
+            "id": 172,
+            "name": "wall-concrete"
+        },
+        {
+            "supercategory": "wall",
+            "id": 173,
+            "name": "wall-other"
+        },
+        {
+            "supercategory": "wall",
+            "id": 174,
+            "name": "wall-panel"
+        },
+        {
+            "supercategory": "wall",
+            "id": 175,
+            "name": "wall-stone"
+        },
+        {
+            "supercategory": "wall",
+            "id": 176,
+            "name": "wall-tile"
+        },
+        {
+            "supercategory": "wall",
+            "id": 177,
+            "name": "wall-wood"
+        },
+        {
+            "supercategory": "water",
+            "id": 178,
+            "name": "water-other"
+        },
+        {
+            "supercategory": "water",
+            "id": 179,
+            "name": "waterdrops"
+        },
+        {
+            "supercategory": "window",
+            "id": 180,
+            "name": "window-blind"
+        },
+        {
+            "supercategory": "window",
+            "id": 181,
+            "name": "window-other"
+        },
+        {
+            "supercategory": "solid",
+            "id": 182,
+            "name": "wood"
+        },
+        {
+            "supercategory": "other",
+            "id": 183,
+            "name": "other"
+        }
+    ],
+    "annotations": [
+        {
+            "segmentation": {
+                "counts": "]i`11Z=0N2L5YDJdN2^;5nE1n93kE1T:0kEEmN7W;3mEEmN8V;3mEElN9W;3lECnN;U;2lEDoN;T;1lEDPO<T;1kEBQO=U;2lE1R:0mENROFi:=SF0UOCe:<WEAk0e0UOAf:a0SF8k9N[ETO0N:V1f0jNa8U1jF1a0mNd82cFc0<]OCk0c0WOj8NeFLMa0`0DAk0:]Ob95bF]OKP1ICi91RG=QODn9MQGY1n8dNTG[1l8eNSG]1l8cNVG[1k8cNVG_1h8aNYG^1g8`N\\G_1d8bN[G\\1g8dNYGZ1i8[NRF2OOX1_1`:00hNXDm0j;oNXDP1k;oNTDQ1T<O0O2FmC[OR<e0:02N1O1O1O1O1N0O3L4ERC5S=O2L[Th01ikWOOO1J0nB1W1N\\:<bEE]:>`EC_:>`EC`:=_ED`:>^ECR:K\\Eb0c0DSOM63n9m0fFNX92iFOV90kF1S90mF1S9NmF3R9MoF2P9OPG2o8NQG2P9MPG3o8NPG4o8GSFTOo0S1o8A^G?b8@`G?`8^OcGb0[8_OdGc0^8[OcGd0^8ZOdGb0]NoNo9<gGd0\\NoNP:1PF0N0h1m0c:O12NN2MdCVO]<j0120O10OUObC50`0a<\\O_Cc0h<M00001O1@VC:P=O8HP`42j_K7UCF`00T;<VDD21NOO1:OJ3;Of:d0kD3;]Oi:^1TEcNi:P202N01001OO11O01O001eNRE8m:POPEO6O3Q1g:QOSEJe0T1X:ROSEJf0S1W:SOoE2WO:P<AXD<]<CVCNO40LY=000k`Y4",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 5184.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                117.0,
+                0.0,
+                193.0,
+                131.0
+            ],
+            "category_id": 94,
+            "id": 20022062
+        },
+        {
+            "segmentation": {
+                "counts": "eh]52U=5L5K3L5YC]Oa<h0M4K4M3L4M4M2000001O01O0000000000000001O000O15K8H8H7I8H8FbR9d0llFj0VOj0VOi0WO8H0000000001O0001O0000000000J6C=ZOf0\\OkDdNc;m0e0TOeC6m<Jc]k1",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 3280.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                416.0,
+                219.0,
+                81.0,
+                108.0
+            ],
+            "category_id": 98,
+            "id": 20022063
+        },
+        {
+            "segmentation": {
+                "counts": "fUj31Y=1O1O1O1O1O1O1N2O1O1O1O1O1O1O1O1O1O1O1O1O1O1O1N2O1O1O1O1O1O1O1O1O1O1O1O1O1O1O1N2O1O1O1O1O1O1O1O1I7_Oa0_Oa0G900000000000000000000000000001OO1001O00000000001O000000000000000000001O000000001O001O1O001O1O2N1O2N2N1O2N1O1OO100O100O100O100N2M3L4M3M3L4M3L4M3O11O2N001`LVF]3l901O0000001O0000001O0000000000000000001O0000000000000000N25K4L3M4L4L4L1O00001O00001O00001O00001O00O1N2N2O1N2O1C=000000000000001O0000000000J63M6J0PMgEn2Y:RMhEm2[:0001O001O000000001O00000000000000000000000000001O0000000000000000000000001O0000000000001O0000001O0000000000000000001O000000000000000000000000000000001O00000000000000001O000000001O00000000000000001O00000000000000000000001O000000000000O1000000O1001O001O001O001O002N3M1O00001O0000001O2N00O1N2",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 28614.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                292.0,
+                311.0,
+                348.0,
+                116.0
+            ],
+            "category_id": 115,
+            "id": 20022064
+        },
+        {
+            "segmentation": {
+                "counts": "Vh_47k<90000001O0000000000001O000001OO1001O00000000001O01O00O11O000000000001O0001O0001O001N20O0F_nW3",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 691.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                344.0,
+                309.0,
+                46.0,
+                22.0
+            ],
+            "category_id": 116,
+            "id": 20022065
+        },
+        {
+            "segmentation": {
+                "counts": "\\982R1e;lN]DT1c;jN_DV1`;hNcDc0P<]ORDO`<0cC0l<0g<0aVO0S<3lCMU<2b001O010O001OQ`S8",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 196.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                288.0,
+                17.0,
+                64.0
+            ],
+            "category_id": 121,
+            "id": 20022066
+        },
+        {
+            "segmentation": {
+                "counts": "^S74X=OO2O2N1LIRC7m<JSC6m<KRC5o<4@EbC09:U<GbCOO169NFV<2fC256LIY<OfC34<U<AgC33=V<HhC9X<GhC:W<>OO100003M3M1O1PDgNl;\\101O1O001OLWDfNi;i0VDFm;5SD^O0=m;OSDA43M8OFn;>RDA;1E20O1NP<2PDN13NM<0D30M00^<1UD0_O0V=0Ym_11`e_NNO0R=2oB3n<MRC5l<KTC6k<KTC6k<JUC7j<IWC7h<601OO11O000000000_C_OX<d0dC]O\\<f0aC[O_<h0<GM00000L3112M2N000001O10M21O02Nn_2C_`MOI9L2O02000000OSCFk<>O1`CEn;<lCJS<i0N1jCnN0On;[1RDdNk;^10O10000N22N00KVDhNk;S19O1O100O1@hCLY<4?O100O11O00O1001OO100000000N22N1O003M1OO1O10000000000000jG@a3`0]LCb3=]LEb3;\\LIb37^LJa35VH@T4=d3:[LGd39UH\\OQ4=i37VH\\OQ4>h36WH]OP4=i3<VLEj3;WLCj3=VLCj3>ULBk3>ULBk3>ULAl3`0SL@m3a0RL_On3a0SL^Om38XH_Ok39m34_H@d3<m32aHAc3>k30eL1Z3NgL1Z3LiL4W3KjL5V3JkL5V3KjL5V3KjL5V3KjL4W3LiL4W3LiL4W3MhL2Y3NgLO]KGl7;fLM^33UHEO5j33R43UHHJ4o33P41WHHJ4R40m34WH1P4Gi3l0ZLQOf3o0[40000000000000000000000000000O1000000000000000000001O0000O1000000000000O1CiCA\\<:=000000O100000000O100L4MQce3",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 5583.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                17.0,
+                0.0,
+                341.0,
+                177.0
+            ],
+            "category_id": 123,
+            "id": 20022067
+        },
+        {
+            "segmentation": {
+                "counts": "0Q5Z800000000O10000000000O10000000000dKhGe3X8\\LgGc3Z8\\LhGc3X8]LjGa3V8_LkG`3U8]LdGB7P4V8]LdGC6P4V8]LeGB5Q4V8^LnGa3R8PLcG109:g3U8PLaGO169NFg3a8ULcG56LIi3_8VLcG4<e3Q8WLcG3=^3^OaL00j8OiG`3^O_L20g81jG^3CaL[9^38100003M3L2O1jLmER3V:M4K5O001NMYMdEh2\\:212M10O001hNeE_O]:`0cEYO3TOZ:d1cEVOe:;ZEkN091a0f:9aEQOJe0f:;`EoNJe0g:;aEoNHd0i:=`EnNGc0k:?`ElNEd0o:=`EC`:=cE@^:CTE>`0N]:AXE=<3l:IXE6i:E\\E:e:A`E<i;N3L3N3Mgg\\7",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 7793.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                0.0,
+                72.0,
+                161.0
+            ],
+            "category_id": 129,
+            "id": 20022068
+        },
+        {
+            "segmentation": {
+                "counts": "`n[23^<OnC>o;EoC<Q<CoC=R<ElC;T<FkC9T<KiC6V<LhC5X<?00O11O000000001OfCROX<:oCFO3P<:f0O0O1O1GVC0k<O]]f39QVYLFQ<<lCGS<i0O11O000000001O000000001O0000000000O8[OTO]Dn0a;ROYDJ2V1e;<01O6J1OO12NI7O10000000000]OZDQO0=f;b0ZDPO1>e;b0]DRON7e;h0\\DoN3;];e0gDXO];h0bDXO_;h0bDWO^;i0dDQO`;m0`03M0000O10004M4K3XO]Ca0j<N5J2K4LlZV1",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 2603.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                182.0,
+                0.0,
+                366.0,
+                67.0
+            ],
+            "category_id": 130,
+            "id": 20022069
+        },
+        {
+            "segmentation": {
+                "counts": "l7;o<2;D01O0O2O00O01000O0100000O01000O010000O010000O01000O01WCMZ<3fCMZ<3>010000O01000O010000O010000O0100QIMf03UOMQJ0i63QOMSJ43Mh62ROMSJ;1Ef63fNOeJON13NM<0Df63hN9cJ6m1_Of22j0m0aLQOe22j0m0bLQOb22m0m0RLPO`N091X42m0m0QLXOeNJ]41m0l0SLYObNJ^41m0l0RL[ObNH^41o0l0QL\\OaNG_41o0l0QL^O_NEa41o0k0RLCn2BQ1k0QLFk2_OT1k0UKXOL`0k3]OT1k0RK]OK<o3]OT1i0RKAG=Q4XOW1j0PKDC?T4SOY1k0kJIC><nNZ30l1l0fJT12RNZ3No1n0^JY15nMJH13Z30X2\\3aJQMX3CW2^3^JQMY3AZ2S4fMmKZ2S4fMmKZ2U4cMlK]2T4cMkK^2U4bMkK^2T4cMlK]2T4bMlK_2T4aMlK_2U4`MkK`2U4_MkKb2T4_MlKa2R4aMnK_2Q4aMPL_2n3cMQL^2n3cMRL]2m3dMSL\\2l3dMTL]2k3dMUL\\2k3dMUL\\2k3cMVL]2j3cMUL^2l3aMTL_2l3`MUL`2k3`MTLa2l3_MTLa2l3_MTLa2l3^MTLc2l3]MTLc2l3]MTLc2l3\\MULd2n3YMQLh2R4UMnKk2S4SMnKm2R4SMmKn2S4RMmKn2T4QMlKo2T4PMlKQ3T4oLlKQ3U4nLkKR3U4mLlKS3T4mLkKT3V4kLjKU3V4jLkKV3U4jLjKW3W4hLiKX32oIn3i2PLX32oIo3g2PLZ3OQJQ4e2oKc3Y1gIdN2_2d2dMd3Y1nIP1\\2hMj3Q1nIQ1]2mMg3Q1aImN7o1f2SNa3R1aImN8h1k2ZN\\3Q1aIlN9g1l2[N\\3Q1^InN;e1k2\\N\\3P1_IoN;d1j2]N\\3o0_IPO<d1h2^N^3m0]IQO=e1h2\\N`3P1kIb0e2^Na3o0hIROFX1Q3hNb3l0jIUOCT1Q3jNb3NZIk0e0UOAU1n2mNj3g0QJ9U2QOP4LmH0N:V1f0P2TOV47jIa0R2WOU30[J<]OCk0c0[2^OR31dIMa0`0DAk0:_2Hg2;\\J1]OKP1Ie2Oc2;\\Ja0=QOU11WO2k4=ZJ?f2VOQNOo4>WJ?g2XOPNJS5?VJ>h2[OmMHU5?VJ`0e2ZOoMHV5?TJ`0f2[OoMFW5?TJa0e2ZOPNEX5`0QJd0e2XORNDX5`0RJc0\\2BXN\\OZ5?RJc0\\2BXN[O[5`0fI^O2OOX1e2AXNZO\\5U2[LbNXNZO]5T2nIhMR2k0bNXO_5W2iIhMU2j0cNWO_5Y2hIeMV2h0fMXOl03`5`2mKUNfN[O]5`2lKiMjMLm0J^5b2jKgMnMJk0M]5b2jKfMRNHf01^5a2kKeMUOIQ5d2gKdMXOHQ5e2fKcMXOIR5d2fKcMXOIR5c2fKeMXOGS5b2hKeMUOJS5`2iKfMTOJS5`2iKfMTOIT5`2iKgMSOIT5`2iKgMROJX5M]IO0Z2Y2QNROHY5NaIV2S2UNSOGY5NcIS2Q2YNROGZ5MdIQ2P2\\NROF[5LdIQ2m1_NTOC\\5MdIo1P2^NoNG]5MdIn1n1_NQOFj5k1RKbNlM_OU13o5o1PK[NkMDV12n5P2QKZNkMCV14o5n1QK\\NPOEP6P2oJ[NQOEP6P2nJ\\NRNCe02[6W1lHZO]1]OQOh0:ZO\\6=kHJ>;m0]OSOh0;XO]64iHO43?:h0BQOh0=WOa6OgH323e05e0FnNk0=UOe6LeH532g03`0KnNk0>SOn5MTJ5\\O1h02:HjN66n0=oNQ69kIDI3e038MlN24R1IiN`04V68XJE3361iN45P1;kNV68\\KGVO2hN62o0>iNW69[KDXOd0fNh0>iNX63`KHTOS2SO\\No5IjKHSOU2SOoM[67\\KEoN4oNn1[7[NgKm1Z4SNdKo1\\4QNdKo1\\4QN[JC\\N0M4h0Y2d6PNaIJSOO3<d0k1e6QNaIk0GU1h6PNaIk0Go0n6VNZIl0TOgN?^2m6QN]Ik0WOgN=^2o6_NeHUO0a18l0R7^NeHm3Z7WNlH_OT7=PIAR7=PICP7=QIBo6mMdHR2>1m6mMdHT20`M=>E]1[7YNlH]25kMF^1Y7WNnHb21gMK`1b7j0fHbMJd1`7i0jH_MFh1a7i0VIWOj6h0[HdM?e1T7VNXHc20fMa0a1[7U1dHkN]7`NWHT2<[O^7[N\\HZ25[OR8d0oGZOR8XN`G0OW2>A[8XNVGT2?D]8<`GH^8:aGH]88cGHh0WN[6R2lHGl0RNjN1^7T2mHIm0TNV6Q2nHKj0VNY6n1mHMh0WNZ6Q1cHA0XO8o1j0YN[6m0dHDNWO9o1i0ZN^6i0cHEM[O9l1MYOY7JeHENZO8n1KZOZ7HfHE:Z1D\\O[7ChHI7X1CQN1[1\\7DjHSOM6?Z3i6ZMQJc2Q6^MoIa2Q6`MoI`2Q6`MoI`2Q6`MoI`2Q6aMnI_2R6aMnI_2R6aMnI_2R6aMnI_2R6`MoI`2l5bLjHo0Y1_2e5nM[JR2d5PN[JP2b5SN^Jn1`5QN\\J`NmN_3g6RN[J_NoN^3e6UNXJ]NoN03_3c6WNZJ\\NoNO1n0Oa1^6bMcIN0h1m0^NSO>;m1G_MT6Q2fJnND\\1AfMT6Q2iJlNA]1BfMS6R2hJnNBZ1BgMT6Q2eJmMVOS1>X1CgMT6Q2eJSOCV1CfMU6>kIP1l0F@Z1i5nMnIR1h0EB[1h5nMoIR1g0DB\\1h5oMoIP1LaN50`0Q1H`1g5nMRJT1K]Nc0R1J^1f5oMSJY1:ZON]1e5PNUJW18\\OO\\1d5QNVJV17]O1Z1b5RNYJV13^O3Y1`5iMmI4?\\1A\\N:V1:S1f5lMXJ`1HBGiN`0X2i5hM_Jc1AG8m0h5iMaJa1BF6P1f5iMdJ^1AI5P1g6UOTIK5P1i6ROTIM2R1l6oNRIO2R1m6nNRIN2T1o6lNnH03T1Q7jNmH02W1R7hNlH12W1R7hNmHO2Z1P7gNoHM2\\1m6fM^HQ1c0K4^1k6iNRIG4`1j6UN`H1c076b1g6RNdH5a0C@2i0S2d6PNcH8R2i1k5XNUJh1l5WNTJi1k5YNSJh1m5fNeI[1[6gNbIY1]6jN`IW1a6iN^IW1b6jN]IV1c6kN[IV1e6kNWIiNeN\\2U8kNTIY1l6hNiHgNZOa2m7iNgHgN^O_2j7jNgHkN\\O[2S7fMXIU17oNZOV2Q7nM[Io09POXOS2S7PNoHANO40L_11aNb0P3_6nMnHa01aNb0P3_6nMnHa01cN`0n2a6_OnHdM`0n2b6D]I<b6E^I<a6D_I<a6D_I<a6AaI`0_6D]I<b6G\\I9d6IZI7f6W31O2hIPIR6U7iJiHX4[7dKfH[4Z7eKgHZ4Y7eKiHFMT4Z7VLkH^O10NP4Y7_LiHA;P4l6_LkH_O8S4m6^LbIa3]6`LcIa3]6^L`I\\OSOW4\\7^LaId3`6[LbIc3^6]LbIc3]6^LeI`3\\6_LcIb3]6^LcIb3]6^LcIb3]6^LbId3\\6]LdIc3\\6]LdIc3\\6]LSIDFQ4W7[LiHM1h3W7nLlHS3T7iLPIW3P1lK[4h0jJ\\3:]Lk4:iJY3KnL\\5JjJk4W5VKeJlNDo5f5VKeJl4Z5VKeJj4\\5WKcJh4\\5XKeJh4[5XKeJh4]5VKcJj4^5gJYJF7b30iM_5nN[JG7[37nMW5iNZJE188W3<RNQ5iN_JBL<5T3f0XMWONb5IhJIFW3n0TMVO3^5IkJEBY3U1SMQO6]5IkJE@X3[1RMoN7Z5JlJE@T3b1SMiN:Y5KjJEAR3f1RMgN<W5KlJl2Y1kLfN=U5LlJk2\\1jLbN`0U5LmJ@AT3c2_Mo2MPKc2U2^Mk2OPKa2Y2^Mg21oJa2Z2`Mf2OPKb2Y2_Mf20oJb2\\2]Mf21oJa2Z2`Mg2JPKi2Y2]Mi2GnJm29iLVO0i1d0k3BPKQ35mLo0a0m3_OoJT33PMn0>n3\\OUKV3ORMj0>o4`2UJhL[O:T1j0[5U2TJUMa0g0[5T2SJVMb0f0Y5V2SJWMb0e0X5W2XJQM`0h0W5W2UJSMg0f0T5W2VJRMe0h0U5V2VJUMb0e0X5jNhIV3?]M>b0b5F_I]1`0_N;?e5TOaID184j0KNa0M3<BhNP68PJHL08?8N=d0@:o5kNoII55758l0XOO]6RO\\JML06U1QOEh6YOXJIL23U2Q6nM`Li1e7I8Gk0UO7J7H_[f0KndYO10O00000000nk01gRO2VE0Q<2N2N2M3RODjD>V;BhD`0W;AgDb0T;]OWD4a0a0W;GbD<\\;k0O1O1@[NXEf1e:]NYEe1e:[N\\Ef1]:hNXE]1c:h0O1O1L400M4N000000O10oJ`MWO`23\\NJa1BWMRLf1OWN[4g0kKV1Z3a0`LcMY4f0VLm0V2\\NcMS3Q4aMYLP1S2i1e1jLdL]1g1j1k2UNVMk1k2TNUMm1j2RNWMn1i2RNXMm1h2RNYMn1h2PNYMP2f2PN[MQ2e2mM\\MS2d2lM]MT2c2cL`JN020m0o2`2a2cLhJ0Kc0m2j2`2cLjJNK`0n2o2]2cLSK9c2T3\\2aLdN_3d50001O0000000001O0000000000000001O00000001O0000000000001O01O0001O00000000000000000010O0000000000000000000000001O000001O000000000000000010O00000001O00000000000000010O000000000000000000000010O00000000YObLaG^3d7dL]H3KX3X7aLZHO21O:b0OIV3S7]MSI@HS3h6`LQI0MT1`0\\OHP3]6`L[If1a0lNDm2T6gNUJ`NEi2i5TO\\J[NIb2d5T4O2D[HPKe7Q5ZHoJg7l3_HgLK]Of7h3cHkLG]Og7n2`HYM2:k7R2^HeME3V8T2XHkMe8P2\\GkMk8R2X1M3L5O0000001O2N00O1N2",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 70572.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                0.0,
+                640.0,
+                358.0
+            ],
+            "category_id": 132,
+            "id": 20022070
+        },
+        {
+            "segmentation": {
+                "counts": "P;[2P;]Oc0iNlZR3CgfmL10000000000000001O000001O000000001O0O100O101OPol4",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 256.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                240.0,
+                263.0,
+                187.0
+            ],
+            "category_id": 165,
+            "id": 20022071
+        },
+        {
+            "segmentation": {
+                "counts": "bZX22W=21O01N101N101O0O101O0O2O00001O0010O1OcC9W;G]Dc0a;e0O010000O1000J66KO01O1O00N200001OO2O00000O1001O000001O00000001O2N0A^DUOb;n0YDjN17f;Q1[DoNd;o0^DQOc;m0_DROa;m0aDRO_;m0bDRO^;2`ELa:3`ELb:2\\1MjB1\\ea17_g^N8I6I7[DWOb:n0YEVOc:P1ZEQOc:S1[EoN_:X1^EiN`:Z1^EgN`:\\1^EfN`:]1^EbNa:V2M4L4M02OO10O100PNbEVO0i1_:POeEo0\\:oNhEn0Y:ROiEj0Y:TO]E[O:T1e:_O_Ea0b:^O_Eb0a:\\ObEb0`:@]E`0b:\\O`Eg0`:YO`Ef0a:ZObEc0^:]OeE`0\\:_OhE=W:DnE6T:HRF3n9I[F1f9M`FOa9Lbl=N]UB4M3M3L4M4L3O11O001O1O1O001O7I8Gn^a2",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 4800.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                173.0,
+                183.0,
+                271.0,
+                111.0
+            ],
+            "category_id": 167,
+            "id": 20022072
+        },
+        {
+            "segmentation": {
+                "counts": "_bQ231NU=2PC2g<N^C1^<O?0YONUD1k;1TDOj;4UDLj;6TDKl;4SDNl;4PDOP<2eCG59U<4jCMV<4fCOY<b0O1SDSO\\;m0_DZO^;g0^D@`;W1N13K10001O001L5MZOfN]EY1c:lNXEV1g:nNUEQ1k:ROSEj0HjNU;<QEi0MlNQ;<PEh01iNQ;?mDi02hNQ;?jDk0^;UObDk0^;UObDj0_;VOaDc04oN[;`19N200aNWD3O10M4h0]<O2M100\\O]C?d<A]C=m<L^=MaB4N201O10AUC=>El;<RDFn;8PDKo;8mCJR<:jCFW<g0OUOnC?V<\\OnCa0_<O100O11OO000M4O001OO1O1000ESC8n<GRC9l<GVC9i<IUC8j<52N2N1O1O1O1O1O001O00001OO10000001O01OO2MiCOW;1^D;Z<5KO1O1O1O[LC]J<a5G]J:c5G\\J9e5GZJ9f5IXJ6i5KVJ3l5ORJ0o51PJMQ66mIJR68nIGP6<]H^OL1_N1W9c0\\HCIIl7f0YHFFDR8g0UHFICR8i0SHDKBS8l0oGDMAS8m0nGBOAT8m0lGCNAV8o0jG_O0BV8Q1hG^O0BY8P1fG^O1BZ8o0eG@OB\\8n0eGAMC]8j0eFPOQ1c0KE_8LeFc00ZOS1c0GEa8JfFNOO1:OJW1a0@Fj8E\\Hg0VN@28[;Z100001O>B3M2N1O1O1O1O]MROjHm0k6POjF9[2e0l6BTI<m6ERI:o6GQI7P7HRI7n6LPI]ObMb0_90PI^OaMb0_90PI^OcM`0]92PI]OdM`0]93UILk63VIMj63VIMj63VIMj63SIOn61VIKj64YIJg66[IHe68W31O2ZC^O^<i0]DUOd:o0XEROg:n0YESOf:m0YEUOFM`:n0jEWO^O10N\\:m0SFUOA;\\:`0SFWO_O8_:a0RFNm91TFOl92SFK\\OSOb:Q1SFLP:4oENo92QFNo91RF1k91TFNm92SFNm92SFNm92SFMn92SFNm92SFNm92SF]ODFZ:n0RFROM1d90kES1W1POj8]1RGgNn8Y1mFlNS9S1PGkNP9U1QGlNl8V1UGfNlNDo9f1VGeNl8Z1VGeNj8\\1WGcNh8\\1XGeNg8\\1YGdNg8^1WGbNe8c1lFTNF7[9h1nFRNG7W9j1kFnME188X9i1jFSNBL<5[9k1hF\\NIFb9n1eF_NEBh9o1cF_NE@j9P2aF`NE@k9P2aF^NEAk9P2`F`Ng9`1YF`Ng9_1ZFaN@AR:n1^FdNc9\\1]FdNc9\\1]FcNd9]1\\FcNd9\\1]FbNe9^1[FcNd9^1WFcNl9_1QFaNP:`1lEcNT:^1jEbNW:\\1gEhNY:U20O100N2N2O10]IXMc2h2]MXMc2h2aIZMf3Oh2m2]JRMl11g3m2lISMD184]2Lj3m2jIXMHL08b13jNER6m2hI^MI5[1LnNIU6h2iISNR1^OnNJV6e2jIVNo0\\OlNM[6a2hIWNQ10V5V3mJhLS5W3PKhLo4W3SK[MZ4d2gK[MZ4d2fK]MZ4b2gK]MZ4b2gKVMa4i2_KPMi4o2XKjLo4U3QKdLW5[3jJ]L^5b3cJWLd5h3]JPLk5o3i1O1O1O1O1O1O1O1O1O1O1O100O10000O100O100O1nNhFQNX9o1lFlMU9S2oFjMQ9V2RGfMo8Y2UGdMk8[2S100O1O100O1O100O1N200001O00000000000000O1001O000000001O001OL44L001O2N001O0nHQNh2l1]IhMh3c0g2e1XM_Nh2`1UMdNk2\\1UMdNk2\\1UMdNk2m0aIdNd3?k2k0dIdNb3a0j2j0dIfNb3`0j2d0RJaNW3k0g2a0PN_OP2a0PN@o1`0QN@o1=TNCl1>SNBm1<bLgNaNm0m4<bLiN^Nl0P5;bLkN\\Nj0R5;bLmNYNi0U5@lINf2MVNe0X5^OnIMg22PNd0[5\\O^M2TMc0^5ZO_JGo1>RNa0`5[O^JFK4V1<nN`0c5ZO^JEK>m0:QO9i5ZO^JEHa0P1>iN3Q6YO^JF[Ol0]19aNOW6VO`Jm0g04]NG^6YO]Jm0g0W1n4lM[Jm0f0V1Q5mMYJm0f0T1S5oMWJm0e0S1V5PNUJn0c0Q1Z5RNRJl0d0Q1\\5SNPJm0b0o0`5TNnIm0a0n0c5UNlIm0XOeNN020m0Z2P6TNkIm0XOmN0Kc0Y2Y6RNlIm0XOoNNK`0Z2^6nMTJg0PO_O9o1j6dMoIn0lN^2U7^LkH2V1f4[701O6J1OO12NI7O10001O00000]OXKSH0=h4`7XKRH1>g4`7[KTHN7g4f7ZKQH3;_4c7eKZH_4f7`KZHa4f7`KYH`4g7bKSHb4k7`03M0001N10000oNgJQJX5o5mJlIS5T6PKTIFa0[5[6UKcIj4]6\\K]Id4c6^KXIe4h6\\KTIg4l6l0000001O00000000000000000000000000ZKVI[N1Z4h6YMaIf2_6XMcIh2]6VMeIj2[6UMfIk2Z6SMhIm2X6SMiIl2W6SMjIm2V6RMkIn2U6QMlIo2T6RMkIn2U6RMlIm2T6UMQJaNUO61b3i6hMPJ`N_O1Ib3h6nM`JR2_5PNaJn1_5SNbJk1^5VN`Jk1`5UN`Jk1`5UN`Jk1`5UN_Jl1a5TN_Jl1a5TN^Jm1b5SN_Jl1a5TN_Jl1a5UN^Jk1b5UN^Jk1b5UN\\Jm1d5RNoI^N^Oc3c6QNcIZNDO0:1`3g6PN`Ic2`6bMZI_2f6S20000000000000000000001O002NL^IaI`6d5bInJe6a4WIlJO21O:b0_6Z4SJeKn5n3UIcK0MT1`0h5c3TImKf1a0U5U3[KhLg4k2fKoL`4k2S3O1EjEaMV:`2iE`MW:\\1oEWOK]OV:X1SF[OG]OV:?QFH2:Z:CoE4E3c:GkE8o:FRE5T;IX1MVh3",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 43041.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                157.0,
+                0.0,
+                474.0,
+                242.0
+            ],
+            "category_id": 173,
+            "id": 20022073
+        },
+        {
+            "segmentation": {
+                "counts": "Q5[1P<00A?000O1000O100000O10O1000000000O0100000O10O100000O1O01000000000O0100000000O10O10000000O1000O100H71000O1000ON3000000000O3N00N2O1O010O1NiNPDW1o;31N10002N0000O010001O00O0O2O1N2O1O1O0010000001N100000000O1VOTD5l;HZD5f;I\\D7g;C\\D=g;^O[Db0X<N100000001N10000000O0O2ID^C=b<600O10O100000O10O10000000000O010000000O12N3M4K2OO1O100O1O10O01H80000O100OK]OdCc0Z<_ObCN1d0\\<_OcCM1c0]<BcC>]<BbC?^<AbC`0]<@cC?^<AbC?^<70O11O00000000O1O003M3L50OM2L25L001O00O100O2M2O1O2N1O3N2M2N`ej5",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 5490.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                127.0,
+                192.0,
+                77.0
+            ],
+            "category_id": 175,
+            "id": 20022074
+        },
+        {
+            "segmentation": {
+                "counts": "W8U18mN^:;TFg0\\OPOl2?k2g1TJiN4ROg1e1Q4?VJgN1XOb0h2W5YOVJfN0[OOZ3k5eNWJcNNA0W3k5dNXJbNME0U3j5eNXJ`NMI0S3k5dNXJ_NNJOS3k5cNYJ_NOJMT3k5cNXJ`N0_3h5QNXJaNOGNV3j5cNYJ`NO^3h5QNZJbNN\\3h5RNYJcNO[3h5RNYJdNNZ3i5QNZJeNMZ3i5QNYJgNNW3h5SNZJRNM91b3h5RN[JSNL:0a3i5RN[JSNM90a3h5SNZJTNN9O`3i5SNZJTNN9O`3h5SN\\JUNM\\4g5_M[JVNN7O_3h5TN[JVNN[4g5^M\\JWNNZ4f5_M[JXNOY4e5`M\\JWNOY4e5_M]JXNNY4e5_M]JYNNW4e5`M\\JZNOV4e5`M\\J[NNU4f5_M]J\\NNT4d5aM]J]NNR4e5aM]J^NMQ4f5`M^J_NMP4e5aM]JaNMn3f5aM]JaNMn3e5aM_JbNLl3e5bM_JV3a5jL^JW3b5iL^JW3b5hL_JX3a5hL^JmNMZ3d5jM_JlNMZ3d5iM`JnNLX3d5jM`JnNLX3d5jM_JoNMW3d5iM`JPOMV3b5kMaJPOLU3c5kM`JQONS3b5lM`JQONS3b5kMaJROMS3b5kM`JTONP3a5mMaJSONP3a5lMbJTOMP3a5lMbJUOLo2b5lMaJ^3_5aLbJ_3^5aLbJ_3]5bLbJ_3^5aLbJ_3^5`LcJ`3]5`LcJ`3]5`LbJa3]5_LdJa3\\5_LdJa3\\5_LcJb3]5]LdJc3\\5]LdJc3[5^LdJc3\\5]LdJc3\\5\\LeJd3[5\\LeJd3[5\\LdJe3\\5ZLeJf3Z5[LfJe3Z5[LeJf3[5YLfJg3Z5YLfJg3Z5YLeJh3Z5YLfJg3Z5XLgJh3Y5XLgJh3Y5XLfJi3Z5VLgJj3Y5VLgJj3X5WLgJj3Y5ULhJk3X5ULhJk3X5ULhJk3X5TLhJm3W5TLiJl3W5TLiJl3W5TLhJm3X5RLiJn3W5RLiJn3V5SLiJn3W5QLjJo3V5QLjJo3V5QLjJo3V5PLjJQ4V5oKjJQ4U5PLkJP4U5PLjJQ4V5nKkJR4U5nKkJR4U5nKjJS4U5mKlJS4T5mKlJS4T5mKlJS4T5lKlJU4T5kKlJU4S5lKmJT4S5lKlJU4T5jKmJV4S5jKmJV4S5jKmJV4S5iKmJX4R5iKnJW4R5iKnJW4R5hKnJY4R5gKnJY4R5gKnJY4Q5hKnJY4R5fKoJZ4Q5fKoJZ4Q5fKoJZ4Q5eKoJ\\4Q5dKoJ\\4P5eKPK[4P5dKPK]4P5cKPK]4P5cKPK]4P5cKPK]4o4cKQK^4R5_KnJa4U5\\KkJd4Y5WKgJj4\\5SKdJm4_5PKaJP5b5lJ^JU5c5jJ]JV5c5jJ]JV5d5iJ\\JW5d5hJ\\JY5d5gJ\\JY5e5fJ[JZ5e5eJ[J\\5f5cJZJ]5f5cJZJ]5g5aJYJ`5g5`JYJ`5h5_JXJa5h5_JXJa5W5fIRKh0Gc5^3cITN5fNd0Hd5^3hInM4iN`0Kd5^3mIiM0nN=Kg5^3PJeMLRO=Kg5^3PJeMNQO:Lh5]3QJfM0nN60i5\\3QJfM0nN6Oj5]3PJeM1PO4Nk5]3PJeM1PO4Nk5]3oIfM2PO2Mn5]3nIfM2PO2Mn5]3nIfM2QO1Lo5]3nIfM2QO0LQ6]3mIfM2QO0LQ6]3lIgM3QOOKR6]3hIkM7mNNLS6\\3cIPN<iNMJU6]3`IRN=hNNIU6T5mISKNIU6T5^IiJ<;OHX6T5]IiJ<;OHX6V5iITKNFY6V5fIWK0C[6V5cIZK1@\\6V5_I^K5\\O\\6S6cInI]6S6bIlI_6T6aIlI_6U6`IkI`6U6_IkIb6U6^IkIb6V6]IjIc6V6\\IkId6V6[IiIf6W6ZIiJf5W5YJjJg5\\6100O10000O10000001O00000000000000001O00000000000000001O00000000000000001O000000O1O1O1001O2N1O00000000000000001O00000000000000001O00000000000000001O00000000000000001O00000000000000001O000000000000000N2O2N1O1O1O1O1O1N2O1O2N1O1O1O1O1O1O1O1O2N1O1O1N2O1O1O1O1O2N1O1O1O1O1O1O1O1O2M2O1O1O1O1O1O1O1O2N1O1A?_Oa0_Oa0_Oa0@`0_Oa0_OiPa00[g^O7j2;kLMP3:eL0X35]L3a30UL:g3JoK`0n3CiKe0U4^OaKl0\\4UO\\KT1b4mNWKZ1h4gNPKa1o4_NkJg1U5ZNcJn1\\5SN\\JT2d5lMVJ[2i5fMoIa2Q6_MhIi2W6XMbIn2^6SMZIR3h6f12M3N2N2M3N2N2M3N2M3N2N3L3N3M3L3N3L3N3M2MROiKPIT4S7PLhHn3Z7VLcHf3a7]L[Ha3g7cLVHZ3l7T1O0O2N2O1N1O2O1N8G:H7I8I7H7I8H8H7I4L3M4L4M3L001O00001O00fHWKR6j4lIXKT6g4kI[KT6e4kI]KT6c4kI_KU6a4hIbKW6`4fIbKY6_4eIcKZ6^4dIdKY6`4dIcKh16Y1\\4iLaKi1Q1b0d3`M]Kj1k1Ln30oLTOT3k0fMZN\\2e1f4O1O1O2N100O1O1O2N2M3N3L3M3N2M4M2M3M9H7H7JPDMQ<2N2N2N2N2N2N2N2N2O20O000000000000000000000001O01O0000000000000000000001O000001O000000000000000001O00000001O000000000000000001O00000001O0000000000000001O0000000001O00000000000001O00000000000001O0000000001O0000000000000001O002N2N3M2O1N2N2N2N2NQa8",
+                "size": [
+                    427,
+                    640
+                ]
+            },
+            "area": 91698.0,
+            "iscrowd": 0,
+            "image_id": 397133,
+            "bbox": [
+                0.0,
+                70.0,
+                619.0,
+                357.0
+            ],
+            "category_id": 183,
+            "id": 20022075
+        }
+    ]
+}

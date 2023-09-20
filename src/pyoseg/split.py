@@ -96,12 +96,12 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
         annotation_files = fann
 
     annotation_id = 1
-    image_id = 1
 
     if ids is None or len(ids) != 0:
         if len(annotation_files) == 0:
             raise FileNotFoundError("No annotation files found in input folder.")
         
+        image_id = 1
         for file in annotation_files:
             with open(os.path.join(input_folder, file), 'r') as f:
                 data = json.load(f)
@@ -109,20 +109,25 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
             if not merged_data["categories"]:
                 merged_data["categories"] = data["categories"]
 
-            for image in data["images"]:
-                image["id"] = image_id
-                merged_data["images"].append(image)
-                image_id += 1
+            if len(data["images"]) > 1:
+                raise ValueError("Expected only one image per file.")
+            
+            image = data["images"][0]
+            image["id"] = image_id
+            merged_data["images"].append(image)
 
             for annotation in data["annotations"]:
+                annotation["image_id"] = image_id
                 annotation["id"] = annotation_id
-                annotation["image_id"] = annotation["image_id"] + (image_id - 1)
-                annotation_id += 1
                 merged_data["annotations"].append(annotation)
+                annotation_id += 1
+            
+            image_id += 1
 
-    print(f"Created annotation file with {len(annotation_files)} images.")
+    print(f"Creating annotation file with {len(annotation_files)} images...")
     with open(output_file, 'w') as f:
         json.dump(merged_data, f)
+    print(f"File created: {output_file}")
     
     return merged_data
 
@@ -165,7 +170,7 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
     return config, train_ann, val_ann, test_ann
 
 
-def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_train_only=True):
+def augment_ids(train_ids, val_ids, test_ids, augmented_path, annotation_suffix, shuffle=True, aug_train_only=True):
     """
     Augments the given IDs with additional IDs from the augmented_path directory.
     
@@ -174,6 +179,7 @@ def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_
         val_ids (list): The list of validation IDs.
         test_ids (list): The list of test IDs.
         augmented_path (str): The path to the directory containing augmented files.
+        shuffle (bool, optional): Whether to shuffle the augmented files. Defaults to True.
         annotation_suffix (str): The suffix of annotated files.
     
     Returns:
@@ -185,7 +191,7 @@ def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_
     for tid in train_ids:
         to_include = [a for a in augmented_files if a.startswith(tid)]
         if len(to_include) > 0:
-            to_include.sort()
+            np.random.shuffle(to_include)
             aug_train_ids.extend(to_include)
     
     for vid in val_ids:
@@ -193,7 +199,8 @@ def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_
         if len(to_include) > 0:
             to_include.sort()
             if aug_train_only:
-                aug_val_ids.append(to_include[-1])
+                to_include = [t for t in to_include if t.endswith(f"aug{len(to_include)-1}")]
+                aug_val_ids.append(to_include[0])
             else:
                 aug_val_ids.extend(to_include)
 
@@ -202,9 +209,17 @@ def augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix,aug_
         if len(to_include) > 0:
             to_include.sort()
             if aug_train_only:
-                aug_test_ids.append(to_include[-1])
+                to_include = [t for t in to_include if t.endswith(f"aug{len(to_include)-1}")]
+                aug_test_ids.append(to_include[0])
             else:
                 aug_test_ids.extend(to_include)
+
+    if shuffle:
+        np.random.shuffle(aug_train_ids)
+        if not aug_train_only:
+            np.random.shuffle(aug_val_ids)
+            np.random.shuffle(aug_test_ids)
+
     return aug_train_ids, aug_val_ids, aug_test_ids
 
 

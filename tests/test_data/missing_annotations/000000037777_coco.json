@@ -1,0 +1,788 @@
+{
+    "info": {
+        "description": "COCO 2017 Stuff Dataset",
+        "url": "http://cocodataset.org",
+        "version": "1.0",
+        "year": 2017,
+        "contributor": "H. Caesar, J. Uijlings, M. Maire, T.-Y. Lin, P. Dollar and V. Ferrari",
+        "date_created": "2017-08-31 00:00:00.0"
+    },
+    "images": [
+        {
+            "license": 1,
+            "file_name": "000000037777.jpg",
+            "coco_url": "http://images.cocodataset.org/val2017/000000037777.jpg",
+            "height": 230,
+            "width": 352,
+            "date_captured": "2013-11-14 20:55:31",
+            "flickr_url": "http://farm9.staticflickr.com/8429/7839199426_f6d48aa585_z.jpg",
+            "id": 37777
+        }
+    ],
+    "licenses": [
+        {
+            "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+            "id": 1,
+            "name": "Attribution-NonCommercial-ShareAlike License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+            "id": 2,
+            "name": "Attribution-NonCommercial License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+            "id": 3,
+            "name": "Attribution-NonCommercial-NoDerivs License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by/2.0/",
+            "id": 4,
+            "name": "Attribution License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+            "id": 5,
+            "name": "Attribution-ShareAlike License"
+        },
+        {
+            "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+            "id": 6,
+            "name": "Attribution-NoDerivs License"
+        },
+        {
+            "url": "http://flickr.com/commons/usage/",
+            "id": 7,
+            "name": "No known copyright restrictions"
+        },
+        {
+            "url": "http://www.usa.gov/copyright.shtml",
+            "id": 8,
+            "name": "United States Government Work"
+        }
+    ],
+    "categories": [
+        {
+            "supercategory": "textile",
+            "id": 92,
+            "name": "banner"
+        },
+        {
+            "supercategory": "textile",
+            "id": 93,
+            "name": "blanket"
+        },
+        {
+            "supercategory": "plant",
+            "id": 94,
+            "name": "branch"
+        },
+        {
+            "supercategory": "building",
+            "id": 95,
+            "name": "bridge"
+        },
+        {
+            "supercategory": "building",
+            "id": 96,
+            "name": "building-other"
+        },
+        {
+            "supercategory": "plant",
+            "id": 97,
+            "name": "bush"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 98,
+            "name": "cabinet"
+        },
+        {
+            "supercategory": "structural",
+            "id": 99,
+            "name": "cage"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 100,
+            "name": "cardboard"
+        },
+        {
+            "supercategory": "floor",
+            "id": 101,
+            "name": "carpet"
+        },
+        {
+            "supercategory": "ceiling",
+            "id": 102,
+            "name": "ceiling-other"
+        },
+        {
+            "supercategory": "ceiling",
+            "id": 103,
+            "name": "ceiling-tile"
+        },
+        {
+            "supercategory": "textile",
+            "id": 104,
+            "name": "cloth"
+        },
+        {
+            "supercategory": "textile",
+            "id": 105,
+            "name": "clothes"
+        },
+        {
+            "supercategory": "sky",
+            "id": 106,
+            "name": "clouds"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 107,
+            "name": "counter"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 108,
+            "name": "cupboard"
+        },
+        {
+            "supercategory": "textile",
+            "id": 109,
+            "name": "curtain"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 110,
+            "name": "desk-stuff"
+        },
+        {
+            "supercategory": "ground",
+            "id": 111,
+            "name": "dirt"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 112,
+            "name": "door-stuff"
+        },
+        {
+            "supercategory": "structural",
+            "id": 113,
+            "name": "fence"
+        },
+        {
+            "supercategory": "floor",
+            "id": 114,
+            "name": "floor-marble"
+        },
+        {
+            "supercategory": "floor",
+            "id": 115,
+            "name": "floor-other"
+        },
+        {
+            "supercategory": "floor",
+            "id": 116,
+            "name": "floor-stone"
+        },
+        {
+            "supercategory": "floor",
+            "id": 117,
+            "name": "floor-tile"
+        },
+        {
+            "supercategory": "floor",
+            "id": 118,
+            "name": "floor-wood"
+        },
+        {
+            "supercategory": "plant",
+            "id": 119,
+            "name": "flower"
+        },
+        {
+            "supercategory": "water",
+            "id": 120,
+            "name": "fog"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 121,
+            "name": "food-other"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 122,
+            "name": "fruit"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 123,
+            "name": "furniture-other"
+        },
+        {
+            "supercategory": "plant",
+            "id": 124,
+            "name": "grass"
+        },
+        {
+            "supercategory": "ground",
+            "id": 125,
+            "name": "gravel"
+        },
+        {
+            "supercategory": "ground",
+            "id": 126,
+            "name": "ground-other"
+        },
+        {
+            "supercategory": "solid",
+            "id": 127,
+            "name": "hill"
+        },
+        {
+            "supercategory": "building",
+            "id": 128,
+            "name": "house"
+        },
+        {
+            "supercategory": "plant",
+            "id": 129,
+            "name": "leaves"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 130,
+            "name": "light"
+        },
+        {
+            "supercategory": "textile",
+            "id": 131,
+            "name": "mat"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 132,
+            "name": "metal"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 133,
+            "name": "mirror-stuff"
+        },
+        {
+            "supercategory": "plant",
+            "id": 134,
+            "name": "moss"
+        },
+        {
+            "supercategory": "solid",
+            "id": 135,
+            "name": "mountain"
+        },
+        {
+            "supercategory": "ground",
+            "id": 136,
+            "name": "mud"
+        },
+        {
+            "supercategory": "textile",
+            "id": 137,
+            "name": "napkin"
+        },
+        {
+            "supercategory": "structural",
+            "id": 138,
+            "name": "net"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 139,
+            "name": "paper"
+        },
+        {
+            "supercategory": "ground",
+            "id": 140,
+            "name": "pavement"
+        },
+        {
+            "supercategory": "textile",
+            "id": 141,
+            "name": "pillow"
+        },
+        {
+            "supercategory": "plant",
+            "id": 142,
+            "name": "plant-other"
+        },
+        {
+            "supercategory": "raw-material",
+            "id": 143,
+            "name": "plastic"
+        },
+        {
+            "supercategory": "ground",
+            "id": 144,
+            "name": "platform"
+        },
+        {
+            "supercategory": "ground",
+            "id": 145,
+            "name": "playingfield"
+        },
+        {
+            "supercategory": "structural",
+            "id": 146,
+            "name": "railing"
+        },
+        {
+            "supercategory": "ground",
+            "id": 147,
+            "name": "railroad"
+        },
+        {
+            "supercategory": "water",
+            "id": 148,
+            "name": "river"
+        },
+        {
+            "supercategory": "ground",
+            "id": 149,
+            "name": "road"
+        },
+        {
+            "supercategory": "solid",
+            "id": 150,
+            "name": "rock"
+        },
+        {
+            "supercategory": "building",
+            "id": 151,
+            "name": "roof"
+        },
+        {
+            "supercategory": "textile",
+            "id": 152,
+            "name": "rug"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 153,
+            "name": "salad"
+        },
+        {
+            "supercategory": "ground",
+            "id": 154,
+            "name": "sand"
+        },
+        {
+            "supercategory": "water",
+            "id": 155,
+            "name": "sea"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 156,
+            "name": "shelf"
+        },
+        {
+            "supercategory": "sky",
+            "id": 157,
+            "name": "sky-other"
+        },
+        {
+            "supercategory": "building",
+            "id": 158,
+            "name": "skyscraper"
+        },
+        {
+            "supercategory": "ground",
+            "id": 159,
+            "name": "snow"
+        },
+        {
+            "supercategory": "solid",
+            "id": 160,
+            "name": "solid-other"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 161,
+            "name": "stairs"
+        },
+        {
+            "supercategory": "solid",
+            "id": 162,
+            "name": "stone"
+        },
+        {
+            "supercategory": "plant",
+            "id": 163,
+            "name": "straw"
+        },
+        {
+            "supercategory": "structural",
+            "id": 164,
+            "name": "structural-other"
+        },
+        {
+            "supercategory": "furniture-stuff",
+            "id": 165,
+            "name": "table"
+        },
+        {
+            "supercategory": "building",
+            "id": 166,
+            "name": "tent"
+        },
+        {
+            "supercategory": "textile",
+            "id": 167,
+            "name": "textile-other"
+        },
+        {
+            "supercategory": "textile",
+            "id": 168,
+            "name": "towel"
+        },
+        {
+            "supercategory": "plant",
+            "id": 169,
+            "name": "tree"
+        },
+        {
+            "supercategory": "food-stuff",
+            "id": 170,
+            "name": "vegetable"
+        },
+        {
+            "supercategory": "wall",
+            "id": 171,
+            "name": "wall-brick"
+        },
+        {
+            "supercategory": "wall",
+            "id": 172,
+            "name": "wall-concrete"
+        },
+        {
+            "supercategory": "wall",
+            "id": 173,
+            "name": "wall-other"
+        },
+        {
+            "supercategory": "wall",
+            "id": 174,
+            "name": "wall-panel"
+        },
+        {
+            "supercategory": "wall",
+            "id": 175,
+            "name": "wall-stone"
+        },
+        {
+            "supercategory": "wall",
+            "id": 176,
+            "name": "wall-tile"
+        },
+        {
+            "supercategory": "wall",
+            "id": 177,
+            "name": "wall-wood"
+        },
+        {
+            "supercategory": "water",
+            "id": 178,
+            "name": "water-other"
+        },
+        {
+            "supercategory": "water",
+            "id": 179,
+            "name": "waterdrops"
+        },
+        {
+            "supercategory": "window",
+            "id": 180,
+            "name": "window-blind"
+        },
+        {
+            "supercategory": "window",
+            "id": 181,
+            "name": "window-other"
+        },
+        {
+            "supercategory": "solid",
+            "id": 182,
+            "name": "wood"
+        },
+        {
+            "supercategory": "other",
+            "id": 183,
+            "name": "other"
+        }
+    ],
+    "annotations": [
+        {
+            "segmentation": {
+                "counts": "Qne01U70oH0[67iIJL9Q6f0O101O00001O01O1O=BiY3KheLe0O1O01K4O20O0100O10000O11O000001O0000001O000010O00001O0001O0000000000001O00001O000010O000SJYO\\5g0aJ\\O^5d0aJ]O`5b0`J^O`5b0`J^O`5b0`J_O`5a0_JD\\5<dJD\\5<dJD\\5<dJE[5;eJFZ5:fJFZ5;eJF[59eJHZ58gJIW57iJJV57iJH\\54dJJ_55aJIa58]JHe57[JCMIj5d0WJDn5>oIDP6i00000000OZJVOIHg06Y3l0WLVOIl0P4MWLXOGl0R4LWLYOFk0S4MVLa0j3^OVLb0j3^OVLa0k3_OULa0k3_OUL`0m3_OTL`0l3ATLROIS1S4K]L4d3L\\L3e3M[L3e3M[L2f31WLOi31WLNj32VLNk32lKoNKo0Y4a0dK@\\4e11O00000O1O2bNcKlNNo0_4KeKUO00Mo0^4LeKVOONOP1^4KeKVONOOP1^4JfKWOMOOP1^4JTL5m3KSL5m3KRL6n3KQL5n3LRL4n3LRL4n3KSL5m3LRL4m3NRL2n3NRL2n3OQL1o30PL0P40PL0P40PL0o30RL0n3YOcK8`0?l3WOlK49f0j3UOXLI0R1h3UOPMj0P3VOPMk0o2UOQMk0o2UOQMk0o2TORMl0n2TORMl0m2UOSMk0m2UOSMk0m2UOSMk0m2UOTMj0l2UOUMl0j2TOVMl0j2TOVMl0j2TOVMl0j2TOVMl0j2SOWMn0h2ROXMn0g2SOYMm0g2SOYMn0f2ROZMo0e2QO[Mo0e2QO[MP1d2PO\\MP1d2PO]Mo0b2RO^Mo0a2PO`MP1`2PO`MP1`2PO`MP1`2PO`MP1`2PO`MP1`2POaMP1]2QOcMo0]2QOcMo0]2POdMP1\\2POdMQ1[2oNeMQ1[2oNeMQ1[2nNfMS1Y2mNgMS1X2oNgMQ1Y2oNgMQ1Y2oNgMQ1Y2oNhMP1X2POhMP1W2QOiMo0W2QOiMo0W2POjMQ1U2oNkMQ1U2oNkMQ1U2nNlMR1S2oNmMQ1S2oNmMQ1S2oNmMP1T2POlMo0U2QOlMh0Y2XOlMO^NKl36hKMg690J6000O1000O10000000O10O10000000000O010000O100000O10000000000O01001O3M1O0O012N[n1",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 9041.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                97.0,
+                61.0,
+                246.0,
+                120.0
+            ],
+            "category_id": 98,
+            "id": 20002205
+        },
+        {
+            "segmentation": {
+                "counts": "Uh[27m65L2M20O03N1N10O01000O11OO01ZN",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 258.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                337.0,
+                54.0,
+                15.0,
+                22.0
+            ],
+            "category_id": 100,
+            "id": 20002206
+        },
+        {
+            "segmentation": {
+                "counts": "0g1_500000000001O00O1O1001O000000002N2N1O1O00000000000000000000000000001O00000000001O001O0000O1000000000000002N7I000000000000001O000000O100000000CTKaNk4[1\\KbNd4^1]KaNc4_1]K`Nd4`1]K_Nc4a1]K_Nc4a1^K^Nb4b1^K]Nc4c1^K\\Nb4d1`00000000000000000006dJ[Nk4P2000000000000000005K2N000000000000nNbK\\O^4d0jKTOV4l0jKTOV4l0R10000000000G90000000000000000001OO1000000O10000001O00O100000000001O00000000000000004L5K00000000000000O1000000000000001300OM01O01O1O001OO0010O101O01O0010OO10O10001O000O10004L3L10O10O100O1N200N3O1O000000000000001O00000000001O1O1O1O1O1OO100000000O11O0000000000O100O1O100O1001OO100000000O1000000000000O1000000O100000000O1000000O100000000O100O100N21O00O100000000000000000000O1000000O100000000O100O100000000O100000000O100000000O100O1000000O100000000O10000O10000000000O100000000O100000000",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 19551.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                0.0,
+                0.0,
+                352.0,
+                79.0
+            ],
+            "category_id": 102,
+            "id": 20002207
+        },
+        {
+            "segmentation": {
+                "counts": "Uc92T70O1\\M3fK>?BGOIM12W4f20000000000000M2O2MaK^M`4b220000000000O6K2N001N101O000000O01000000000000001O002N0001O0O102nMYKb0;Dj4MiJJe0OYOOj60VIOl60TI0h^j1",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 3414.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                42.0,
+                81.0,
+                50.0,
+                91.0
+            ],
+            "category_id": 112,
+            "id": 20002208
+        },
+        {
+            "segmentation": {
+                "counts": "a5e1a50O1O100O100O10000000000O10000000000000000000000O100000N3OO10O1000O0100O10000O100O2O000O2O000O100O10000ON3N1N^NaJc1_520O10000O10O0100000O10000000000O10001O00001O00010O02OO1O1O1N2O10N01O10O010O10000O1000:E100O2O000O2O0O1000O07J001N2O0O2O001N101M2O2M2O1O00O11O6K1N00100O5L0O010O10003L2O1O0O10bS<6YlCN10001O00O100O01000O1O100O100O01000000000000O01O10001O00000O101O00O1O100O100000000001O1O2NOXIFg69ZIGe69\\IGc69^IFc69^IGa69600000000000001O0O10000010O000100O0010O00010O0000001O01O01_IIQ68>100O1O100O1O2gIBf5?ZJBd5?a01O1O1O2VJ^Om4b0hJHX59^J0b5j0000000O1O1M37IOnNXKHS601O0000000000000N`h8",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 8012.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                0.0,
+                161.0,
+                312.0,
+                69.0
+            ],
+            "category_id": 114,
+            "id": 20002209
+        },
+        {
+            "segmentation": {
+                "counts": "URm06n63O0O100O2O000O02O00000O100000000001O01O00001O000001O000000004UICe6`0O000000000001O000O2M2O1000001O00000000001O0001O01O00001N101N3M[\\g00dcXO4TILb65\\ILe64ZIMm0Oe4?bJKK3\\5W12QO\\f1ZOV[N200000000001O0000000000000000000000000000000000000000000000000000XKN\\22dMN\\22\\20WKN^22[20WK5W2KiM=o1C",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 1012.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                129.0,
+                74.0,
+                223.0,
+                156.0
+            ],
+            "category_id": 123,
+            "id": 20002210
+        },
+        {
+            "segmentation": {
+                "counts": "UP`02P77M1O001O001O001O3M1O0000000000000006BlX;N]`D2j66O2N00O1O2N1N2Mkc42V\\K4L001O0000000000O100O100001O001O0000O100000000O1000000O10000O100O1N20VbP1",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 588.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                71.0,
+                0.0,
+                136.0,
+                112.0
+            ],
+            "category_id": 130,
+            "id": 20002211
+        },
+        {
+            "segmentation": {
+                "counts": "ean1=h6101N1000001O01N100N6FVj=",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 170.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                278.0,
+                111.0,
+                12.0,
+                17.0
+            ],
+            "category_id": 143,
+            "id": 20002212
+        },
+        {
+            "segmentation": {
+                "counts": "ona01U7000O10000O10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000O100000000\\_=",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 632.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                79.0,
+                226.0,
+                212.0,
+                4.0
+            ],
+            "category_id": 165,
+            "id": 20002213
+        },
+        {
+            "segmentation": {
+                "counts": "g1j3\\300O1O100O2O0O01O1001O000O10002N2N1O1O00000000000O10000001OO1000001N10000000001O001N100O0]MYL@>?BGOIM1k3>f2000000000002N7H100000000000001O05K2N0O2O001O0001O0O10O1000000O100001O00000001O00002cIDb0;n3`0cKSOJe0OYOZ4_2eKaM[4`2dK`M\\4e2000000000JdKbM\\4^2dKaM]4n1jKVNJLa4i1h0M100@hJROX5m0kJQOU5n0nJPOR5P1QKmNo4S1UKjNh37`Lo0HkNg3>YLg00XOZ31fLh0O1a2k201O1O001O0G:O001O001O0000O1oLlMn0V2]N_Nc1b1[N_Nj1[1VNeNl1Z1TNgNj1Z1UNhNj1X1VNhNj1W1VNjNn1R1RNnNn1R1RNoNl1R1TNnNl1S1SNmNm1S1SNlNOROl0Q2VOmNLT34lLLT34lLLT34lLZOjN;Z4<SMCm2=UMAl2>TMBl2>SMCm2>QMCo2=PMDP3<nLFR3;jLHV38hLJX36hLJX36hLJ\\32dLNa3M_L3a3N_L1a3O_L1a3O_L1a3O_L1a3O_L1a3OcL]OgN>f45fLJY38fLHZ38fLHZ38fLHZ39eLG[39eLG[39eLG[3:dLF\\3:dLF]39eLE_38aLGb36^LJb37]LIc37]LKb34_L0]30gLJZ36fLJ[35eLLY35hLHY39hLEY3;gLDZ3<gLB[3>eLA[3?f100013K2O001O10O00000000oJB^3:XL]OTO3o4=mKEnNOU5=lKJS47mKIS47nKHR49mKGS49mKGS49mKGS49mKGS4:lKGT48mKHS47mKIS47mKIS47mKGU49kKGU49nKDR4<nKDR4<nKDR4=nKBS4=[1001O000001O10dJAlNNn4`0lKDUO00Mo4>lKEVOONOQ5=jKFVONOOR5<hKHWOMOOQ5=iK5W4KiK5W4KiK4X4LiK3W4LjK4U4MkK3V4LiK5W4KjK4V4KlK4T4LlK4T4LmK3S4MnK2Q4OoK1Q4OoKDoNN07Q57ZLHe39\\LFd39]LGb3:]LGc39]LHc37]LIb38_LGa39_LGa39^LHb38^LHb37_LI`38`LH`38`LH`38_LJ`36aLI_37aLI_37`LJ`36`LJ_37aLI_37aLI_37aLI_36bLJ]37cLI]37dLH\\38dLH\\38dLH\\38eLF[3;eLEaNIh4a0hLF`NIh4a0hLEaNJg4a0hLEaNJf4b0iLDaNJf4b0iLCbNKe4b0iLCbNKe4b0iLDaNKe4`0kLE`NKd4a0lLDaNJc4b0jLFcNHb4c0lLDbNIb4c0lLDbNI`4e0nLBbNIa4d0mLCbNIa4d0nLBaNJ`4d0PMB`NJ`4d0oLCaNI`4d0oLCaNI`4d0PMB`NK_4c0RMA_NL_4b0SMB^NL_4b0SMB^NL_4b0SMB^NL_4b0SMC]NK`4b0SMGm29SMGl29UMGk29VMFj2:XMBj2>WM@i2a0XM^Oh2a0o100000O100O010000000O1000O1000O100000000O010O10O1000O100000000O1000O010J6N2O1N20O0100O100O010000000OfN",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 16843.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                0.0,
+                35.0,
+                352.0,
+                155.0
+            ],
+            "category_id": 172,
+            "id": 20002214
+        },
+        {
+            "segmentation": {
+                "counts": "deY111031h60UI100i69N2O1JE`I<`651L_IAa6<60000K5N7JoWR1",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 172.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                185.0,
+                114.0,
+                14.0,
+                21.0
+            ],
+            "category_id": 176,
+            "id": 20002215
+        },
+        {
+            "segmentation": {
+                "counts": "PXf1120k69XOI^J9^5O\\J2c59QJHP6g00001O0O0100000000O02O00O1000O100000001O00001O000O10000000000000AaJWO^5i0`000O10O1001O01O000RJXO^5l0XJ[Og5R100O10000O1000O1N2001N10dN\\JV1j51Wf:",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 2304.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                241.0,
+                82.0,
+                63.0,
+                47.0
+            ],
+            "category_id": 181,
+            "id": 20002216
+        },
+        {
+            "segmentation": {
+                "counts": "\\`61U7000O10000O100O10000O100O10000O10000O100O10000O2O0O10000O10000O100O100000000000000000000001O00001N10001N101O1N2O1O1O1OO10000O100O10000O10000O100O100oLKQO5n0NoN3P10nN0R13jNNV16fNJZ16fNJZ16eNK[4000O100O10000O100N2O1N2O1O1O1O1O100O1O100O100O100O100iM]OkMc0S2V1ULkNk3V1TLjNl3V1TLjNl3W1RLjNn3V1RLjNn3U1RLlNn3T1RLlNn3S1SLmNm3S1RLnNn3R1RLnNn3Q1SLoNm3Q1RLPOn3o0SLQOm3o0SLQOm3o0SLQOm3o0RLROn3n0RLROn3n0RLROn3n0RLROn3S2000000000000000000000000000000004L:F000000000000000000001O0000000000001O00001aNbK4^4QO]Lo0l41000000000000O100000000000000O1000000000000O10000001O000000001O00O1O100O100000000001O2N1OOdNZJZ1f5gNZJX1f5iNZJV1f5kNYJU1g5lNYJS1g560hNYJQ1g57000iNYJo0g58000000O10000001O00001O00001OaNeNSM[1m2eNSM:cNe0Z4QOTM:bNd0Y4SOUM9cNc0X4TOUM9cNc0X4TOUM:cNa0W4VOWM8cNa0V4WOWM:bN>X4WOVM<bN<X4XOWM<`N<Y4XOXMV1h2jNYMU1g2kNZMT1f2lN[MS1e2mN\\MR1d2nN]M>ZN2Y4@^M>ZN0X4C_M=XNOY4D`M=XNLY4G`Mj0`2VOaMi0_2WObMh0^2XOcMg0]2YOeM`0`2@aM6i2Hfm1m0]RN[1jMV201O00000O10000000000O10000000000O1000000000000O10000000000O10000000000O1000000000000O10000Z1fNa3",
+                "size": [
+                    230,
+                    352
+                ]
+            },
+            "area": 18354.0,
+            "iscrowd": 0,
+            "image_id": 37777,
+            "bbox": [
+                28.0,
+                75.0,
+                323.0,
+                155.0
+            ],
+            "category_id": 183,
+            "id": 20002217
+        }
+    ]
+}

@@ -1,6 +1,7 @@
-import os, sys, math
+import os
 import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import pycocotools.mask as mask
@@ -14,15 +15,21 @@ from skimage.color import rgb2gray
 from pyoseg.split import get_split_ids
 from PIL import Image
 
+
+# This is needed to avoid memory leak with matplotlib with multiple plots
+matplotlib.use('Agg')
+
+
 def get_iou(inference, gt, quiet=True):
     """
     Calculates the Intersection over Union (IoU) between two binary masks.
-    
+
     Parameters:
         inference (ndarray): The predicted binary mask.
         gt (ndarray): The ground truth binary mask.
-        quiet (bool, optional): Whether or not to print the number of nuclei in the ground truth and inference masks. Defaults to True.
-    
+        quiet (bool, optional): Whether or not to print the number of nuclei
+            in the ground truth and inference masks. Defaults to True.
+
     Returns:
         ndarray: The IoU between the two masks.
     """
@@ -34,9 +41,10 @@ def get_iou(inference, gt, quiet=True):
     true_bins = np.append(true_objects, true_objects[-1] + 1)
     pred_bins = np.append(pred_objects, pred_objects[-1] + 1)
     
-    intersection, xedges, yedges = np.histogram2d(gt.flatten(), inference.flatten(), bins=(true_bins, pred_bins))
-    area_true = np.histogram(gt, bins = true_bins)[0]
-    area_pred = np.histogram(inference, bins = pred_bins)[0]
+    intersection, xedges, yedges = np.histogram2d(
+        gt.flatten(), inference.flatten(), bins=(true_bins, pred_bins))
+    area_true = np.histogram(gt, bins=true_bins)[0]
+    area_pred = np.histogram(inference, bins=pred_bins)[0]
     area_true = np.expand_dims(area_true, -1)
     area_pred = np.expand_dims(area_pred, 0)
 
@@ -45,49 +53,64 @@ def get_iou(inference, gt, quiet=True):
     union = union[1:,1:]
     union[union == 0] = 1e-9
     iou = intersection / union
+
+    if (iou > 1.).any():
+        raise ValueError("Intersection over union greater than 1.")
     return iou
 
 
-def precision_at(threshold,iou,quiet=True):
+def precision_at(threshold, iou, quiet=True):
     """
-    Calculates the precision at a given threshold for a set of intersection over union (IOU) values.
-    
+    Calculates the precision at a given threshold for a set of intersection
+    over union (IOU) values.
+
     Args:
         threshold (float): The IOU threshold to calculate precision at.
         iou (ndarray): The array of IOU values.
-        quiet (bool, optional): Whether to suppress printing intermediate results. Defaults to True.
-    
+        quiet (bool, optional): Whether to suppress printing intermediate
+            results. Defaults to True.
+
     Returns:
-        tuple: A tuple containing the number of true positives, false positives, and false negatives.
+        tuple: A tuple containing the number of true positives, false
+            positives, and false negatives.
     """
     matches = iou > threshold
-    true_positives =  np.sum(matches, axis=1) == 1  # Correct objects
+    true_positives = np.sum(matches, axis=1) == 1  # Correct objects
     false_positives = np.sum(matches, axis=0) == 0  # Missed objects
     false_negatives = np.sum(matches, axis=1) == 0  # Extra objects
-    tp, fp, fn = np.sum(true_positives), np.sum(false_positives), np.sum(false_negatives)
-    
+    tp, fp, fn = np.sum(true_positives), np.sum(false_positives), \
+        np.sum(false_negatives)
+
     matches_01 = iou > 0.1
-    merges = np.sum(np.sum(matches_01, axis = 0) > 1)
-    splits = np.sum(np.sum(matches_01, axis = 1) > 1)
+    merges = np.sum(np.sum(matches_01, axis=0) > 1)
+    splits = np.sum(np.sum(matches_01, axis=1) > 1)
     if not quiet:
-        print("merges:{0}, splits:{1}, true_positives:{2} false_positives:{3}, false_negatives:{4}".format(merges, splits, tp, fp, fn))
+        print("merges:{0}, splits:{1}, true_positives:{2} false_positives:{3},\
+              false_negatives:{4}".format(merges, splits, tp, fp, fn))
     return true_positives, false_positives, false_negatives
 
 
-def get_permuted_lookup(ids):
+def get_permuted_lookup(ids, max_ids=None, seed=2):
     """
     Permute the instance ids for better display.
 
     Parameters:
         ids (list): A list of instance ids.
+        seed (int, optional): The seed for the random number generator.
+            Defaults to None.
 
     Returns:
         numpy.ndarray: A permuted lookup array.
     """
+    # No ids given
+    if len(ids) == 0:
+        raise ValueError("No ids given")
+    
     # Permute the instance ids for better display
-    np.random.seed(2)
+    np.random.seed(seed)
     max_id = np.max(ids)
-    max_id = 2000
+    if max_ids is not None:
+        max_id = max_ids
     lookup = np.random.permutation(max_id + 2)
     # Make sure background stays as background
     lookup = lookup[lookup != 0]
@@ -95,7 +118,7 @@ def get_permuted_lookup(ids):
     return lookup
 
 
-def get_intersections(gt,pred):
+def get_intersections(gt, pred):
     """
     Calculate the intersections between two sets of nuclei masks.
 
@@ -106,10 +129,11 @@ def get_intersections(gt,pred):
     Returns:
         list: A list containing two elements:
             - inference_permuted (ndarray): Permuted predicted nuclei masks.
-            - gt_xor_inference (ndarray): Ground truth XOR predicted nuclei masks with highlighted false negatives and false positives.
+            - gt_xor_inference (ndarray): Ground truth XOR predicted nuclei
+                masks with highlighted false negatives and false positives.
     """
-    iou = get_iou(pred,gt,1)
-    tp, fp, fn = precision_at(0.7,iou,1)
+    iou = get_iou(pred, gt, 1)
+    tp, fp, fn = precision_at(0.7, iou, 1)
     fn_indexes = np.nonzero(fn)[0] + 1
     fp_indexes = np.nonzero(fp)[0] + 1
 
@@ -123,14 +147,36 @@ def get_intersections(gt,pred):
     gt_fn_permuted = lookup_gt[gt_fn.astype("uint16")]
     
     # Highlight all the false positive nuclei in addition to xor
-    np.copyto(gt_xor_inference, gt_fn_permuted, where = gt_fn != 0)
+    np.copyto(gt_xor_inference, gt_fn_permuted, where=gt_fn != 0)
         
     lookup_inference = get_permuted_lookup(pred.astype("uint16"))
     inference_permuted = lookup_inference[pred.astype("uint16")]
     return [inference_permuted, gt_xor_inference]
 
 
-def plot_gt_image(img,gt,name='gt.png'):
+def color_map(color="gist_ncar"):
+    """
+    Generate a color map based on the given color name.
+
+    Parameters:
+        color (str): The name of the color map. Defaults to "gist_ncar".
+
+    Returns:
+        ListedColormap: The generated color map.
+    """
+    from matplotlib import cm
+    from matplotlib.colors import ListedColormap
+    gist_ncar = cm.get_cmap(color, 256)
+    newcolors = gist_ncar(np.linspace(0, 1, 256))
+    black = np.array([0, 0, 0, 1])
+    magneta = np.array([1, 0, 1, 1])
+    newcolors[0, :] = black
+    newcolors[255, :] = magneta
+    newcmp = ListedColormap(newcolors)
+    return newcmp
+
+
+def plot_gt_image(img, gt, name='gt.png'):
     """
     Plot a ground truth image with overlays on top of the original image.
 
@@ -147,130 +193,114 @@ def plot_gt_image(img,gt,name='gt.png'):
     """
     image = rgb2gray(img)
     assert image.shape == gt.shape, "Image and masks have different sizes!"
-        
-    fig, ax = plt.subplots(1,1, figsize=(32,32))
+
+    fig, ax = plt.subplots(1, 1, figsize=(32, 32))
     fig.tight_layout(pad=-2.6)
     nuclei_cmap = "gist_ncar"
     inf_alpha = 0.8
-        
+
     # Cconvert zero to black color in gitst_ncar
-    if nuclei_cmap == "gist_ncar":
-        from matplotlib import cm
-        from matplotlib.colors import ListedColormap
-        gist_ncar = cm.get_cmap('gist_ncar', 256)
-        newcolors = gist_ncar(np.linspace(0, 1, 256))
-        black = np.array([0, 0, 0, 1])
-        magneta = np.array([1, 0, 1, 1])
-        newcolors[0, :] = black
-        newcolors[255, :] = magneta
-        newcmp = ListedColormap(newcolors)
-        nuclei_cmap = newcmp
-        
-        ax.imshow(gt, cmap=nuclei_cmap)
-        ax.imshow(image, cmap=plt.cm.gray, alpha=inf_alpha)
+    nuclei_cmap = color_map(nuclei_cmap)
 
-        # Turn off axis and y axis
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
+    ax.imshow(gt, cmap=nuclei_cmap)
+    ax.imshow(image, cmap=plt.cm.gray, alpha=inf_alpha)
 
-        fig.savefig(name, bbox_inches = 'tight',pad_inches = 0)
-        plt.close()
+    # Turn off axis and y axis
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+    fig.savefig(name, bbox_inches='tight', pad_inches=0)
+    plt.close()
 
 
-def plot_intersections(gt,gt_per,gt_xor,image,name='intersections.png'):
+def plot_intersections(gt, gt_per, gt_xor, image, name='intersections.png'):
     """
-        Plot the intersections between ground truth, ground truth with perturbations, and ground truth with XOR operation.
-        
+        Plot the intersections between ground truth, ground truth with
+        perturbations, and ground truth with XOR operation.
+
         Parameters:
             gt: Ground truth image
             gt_per: Ground truth image with perturbations
             gt_xor: Ground truth image with XOR operation
             image: Input image
             name: Name of the output image file (default: "intersections.png")
-        
+
         Returns:
             None
     """
     nfigures = 3
-    dim = (0,200,0,200)
+    dim = (0, 200, 0, 200)
 
     image = rgb2gray(image)
-        
-    fig, axes = plt.subplots(1,nfigures, figsize=(32,32))
+
+    fig, axes = plt.subplots(1, nfigures, figsize=(32, 32))
     fig.tight_layout(pad=-2.6)
     nuclei_cmap = "gist_ncar"
     inf_alpha = 0.3
     err_alpha = 0.25
     mag = 1
-        
+
     # Cconvert zero to black color in gitst_ncar
-    if nuclei_cmap == "gist_ncar":
-        from matplotlib import cm
-        from matplotlib.colors import ListedColormap
-        gist_ncar = cm.get_cmap('gist_ncar', 256)
-        newcolors = gist_ncar(np.linspace(0, 1, 256))
-        black = np.array([0, 0, 0, 1])
-        magneta = np.array([1, 0, 1, 1])
-        newcolors[0, :] = black
-        newcolors[255, :] = magneta
-        newcmp = ListedColormap(newcolors)
-        nuclei_cmap = newcmp
-        
-        axes_id = -1
+    nuclei_cmap = color_map(nuclei_cmap)
 
-        axes_id += 1
-        axes[axes_id].imshow(image, cmap=plt.cm.gray)
-        axes[axes_id].imshow(gt, cmap=nuclei_cmap, alpha=inf_alpha)
+    axes_id = -1
 
-        axes_id += 1
-        axes[axes_id].imshow(image, cmap=plt.cm.gray)
-        axes[axes_id].imshow(gt_per, cmap=nuclei_cmap, alpha=inf_alpha)
+    axes_id += 1
+    axes[axes_id].imshow(image, cmap=plt.cm.gray)
+    axes[axes_id].imshow(gt, cmap=nuclei_cmap, alpha=inf_alpha)
 
-        axes_id += 1
-        axes[axes_id].imshow(image, cmap=plt.cm.gray)
-        axes[axes_id].imshow(gt_xor, cmap=nuclei_cmap, alpha=err_alpha)
+    axes_id += 1
+    axes[axes_id].imshow(image, cmap=plt.cm.gray)
+    axes[axes_id].imshow(gt_per, cmap=nuclei_cmap, alpha=inf_alpha)
 
-        x_loc = int((dim[1] - dim[0]) * 3 / 4)
-        y_loc = int((dim[3] - dim[2]) * 7 / 8)
-        
-        lower_write = dim[1] - dim[0] - 20 / (500 / (dim[1] - dim[0]))
-        rect = patches.Rectangle((lower_write - mag, y_loc), mag, 8, color ='w')
-        axes[axes_id].add_patch(rect)
+    axes_id += 1
+    axes[axes_id].imshow(image, cmap=plt.cm.gray)
+    axes[axes_id].imshow(gt_xor, cmap=nuclei_cmap, alpha=err_alpha)
 
-        # Turn off axis and y axis
-        for axes_id in range(0, nfigures):
-            axes[axes_id].get_xaxis().set_visible(False)
-            axes[axes_id].get_yaxis().set_visible(False)
+    x_loc = int((dim[1] - dim[0]) * 3 / 4)
+    y_loc = int((dim[3] - dim[2]) * 7 / 8)
 
-        fig.savefig(name, bbox_inches = 'tight',pad_inches = 0)
-        plt.close()
+    lower_write = dim[1] - dim[0] - 20 / (500 / (dim[1] - dim[0]))
+    rect = patches.Rectangle((lower_write - mag, y_loc), mag, 8, color='w')
+    axes[axes_id].add_patch(rect)
+
+    # Turn off axis and y axis
+    for axes_id in range(0, nfigures):
+        axes[axes_id].get_xaxis().set_visible(False)
+        axes[axes_id].get_yaxis().set_visible(False)
+
+    fig.savefig(name, bbox_inches='tight', pad_inches=0)
+    plt.close()
 
 
 def get_prediction_annotations(file):
     """
-    Reads a JSON file and returns a dictionary containing predictions indexed by image IDs.
+    Reads a JSON file and returns a dictionary containing predictions indexed
+    by image IDs.
 
     Parameters:
         file: A string representing the path to the JSON file.
 
     Returns:
-        pred: A dictionary where the keys are image IDs (as strings) and the values are lists of predictions.
+        pred: A dictionary where the keys are image IDs (as strings) and the
+            values are lists of predictions.
     """
-    with open(file,'r') as f:
+    with open(file, 'r') as f:
         p = json.load(f)
-    
+
     pred = {}
     for i in p:
         if str(i['image_id']) not in pred.keys():
             pred[str(i['image_id'])] = []
         pred[str(i['image_id'])].append(i)
-    
+
     return pred
 
 
-def get_gt_annotations(file,ids):
+def get_gt_annotations(file, ids):
     """
-    Reads a JSON file and extracts the ground truth (gt) annotations for the given ids.
+    Reads a JSON file and extracts the ground truth (gt) annotations for the
+    given ids.
 
     Parameters:
         file (str): The path to the JSON file.
@@ -279,9 +309,9 @@ def get_gt_annotations(file,ids):
     Returns:
         dict: A dictionary containing the ground truth annotations for each id.
     """
-    with open(file,'r') as f:
+    with open(file, 'r') as f:
         d = json.load(f)
-    
+
     gt = {}
     for i in ids:
         gt[str(i)] = {}
@@ -293,11 +323,81 @@ def get_gt_annotations(file,ids):
         for ann in d['annotations']:
             if ann['image_id'] == i:
                 gt[str(i)]['annotations'].append(ann)
+        if len(gt[str(i)]['images']) == 0:
+            print(f"Warning: No images found for id {i}")
+            del gt[str(i)]
 
     return gt
 
 
-def annotation_poly_to_tiff(json_data,height,width,output_name="",ann_type="All"):
+def get_poly_from_segmentation(ann):
+    """
+    Takes in an annotation and returns a polygon representation of the annotation.
+
+    Parameters:
+        ann: The annotation to convert to a polygon. It can be either a list or a dictionary.
+
+    Returns:
+        The polygon representation of the annotation. If the annotation is a list,
+            it returns the first element of the list. If the annotation is a dictionary,
+            it decodes the mask and returns the polygon representation. If the annotation
+            is neither a list nor a dictionary, it returns None.
+    """
+    if type(ann) == list:
+        return ann[0]
+    if type(ann) == dict:
+        poly_list = mask.decode(ann)
+        return cv_to_poly(poly_list)
+    return None
+
+
+def poly_to_cv(poly, height, width, color=1):
+    """
+    Generates a binary mask image in OpenCV format from a polygon.
+
+    Parameters:
+        poly (list): A list of polygon coordinates in the format
+            [x1, y1, x2, y2, ...].
+        height (int): The height of the output mask.
+        width (int): The width of the output mask.
+
+    Returns:
+        cv2_mask (ndarray): A binary mask image with shape (height, width).
+    """
+    cv2_mask = np.zeros((height, width), dtype=np.uint8)
+    if len(poly) == 0:
+        return cv2_mask
+    contour_list = [[poly[i*2], poly[i*2+1]] for i in range(int(len(poly)/2))]
+    nd_contour = np.array(contour_list).astype("int64")
+    cv2.fillPoly(cv2_mask, [nd_contour], color)
+    return cv2_mask
+
+
+def cv_to_poly(cv_mask):
+    """
+    Converts a contour mask to a polygon representation.
+
+    Parameters:
+        cv_mask (numpy.ndarray): The contour mask to be converted.
+
+    Returns:
+        list or None: The polygon representation of the contour mask,
+            or None if the contour mask does not meet the size requirement.
+    """
+    if np.sum(cv_mask) == 0:
+        return None
+    contours, _ = cv2.findContours(
+        cv_mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) == 0:
+        return None
+    contour = contours[0]
+    if contour.size >= 6:
+        return contour.flatten().tolist()
+    return None
+
+
+def annotation_poly_to_tiff(
+        json_data, height, width, output_name="", ann_type="All"):
     """
     Converts a polygon annotation in a JSON file to a TIFF image.
 
@@ -305,47 +405,61 @@ def annotation_poly_to_tiff(json_data,height,width,output_name="",ann_type="All"
         json_data (dict): A dictionary containing the JSON data.
         height (int): The height of the TIFF image.
         width (int): The width of the TIFF image.
-        output_name (str, optional): The name of the output TIFF file. Defaults to "".
-        ann_type (str, optional): The type of annotation to convert. Defaults to "All".
+        output_name (str, optional): The name of the output TIFF file.
+            Defaults to "".
+        ann_type (str, optional): The type of annotation to convert.
+            Defaults to "All".
 
     Returns:
-        numpy.ndarray: An array representing the converted annotations as a TIFF image.
+        numpy.ndarray: An array representing the converted annotations as
+            a TIFF image.
     """
     objects = json_data["annotations"]
     masks = np.zeros((height, width), dtype=np.uint16)
 
-    #For every object
+    # For every object
     object_id = 1
     for obj_dict in objects:
-        if ann_type == "All" or obj_dict["name"] == ann_type: # if converting membrane annotations to png/tif, replace "Nucleus" with "Membrane"
-            poly_list = obj_dict["segmentation"][0]
-            contour_list = [[poly_list[i*2], poly_list[i*2+1]] for i in range(int(len(poly_list)/2))]
-            nd_contour = np.array(contour_list).astype("int64")
-            cv2.fillPoly(masks,pts=[nd_contour], color=object_id)
+        # if converting membrane annotations to png/tif, replace "Nucleus"
+        # with "Membrane"
+        if ann_type == "All" or obj_dict["name"] == ann_type:
+            poly_list = get_poly_from_segmentation(obj_dict["segmentation"])
+            if poly_list is None:
+                continue
 
-            object_id += 1 
-    
+            contour_list = [[poly_list[i*2], poly_list[i*2+1]]
+                            for i in range(int(len(poly_list)/2))]
+            nd_contour = np.array(contour_list).astype("int64")
+            cv2.fillPoly(masks, pts=[nd_contour], color=object_id)
+
+            object_id += 1
+
     if output_name != "":
         tifffile.imwrite(output_name, masks)
     return masks
 
-
-def polygon_from_mask(maskedArr): # https://github.com/hazirbas/coco-json-converter/blob/master/generate_coco_json.py
+# https://github.com/hazirbas/coco-json-converter/blob/master/generate_coco_json.py
+def polygon_from_mask(maskedArr):
     """
-    Given a masked array, this function finds the contours of the mask and returns the polygon, bounding rectangle, and area.
+    Given a masked array, this function finds the contours of the mask and
+    returns the polygon, bounding rectangle, and area.
 
     Parameters:
         maskedArr (ndarray): The masked array representing the image mask.
 
     Returns:
-        tuple: A tuple containing the polygon coordinates, bounding rectangle coordinates, and area of the mask.
+        tuple: A tuple containing the polygon coordinates, bounding rectangle
+            coordinates, and area of the mask.
 
     Notes:
-        - The function assumes that the maskedArr is a binary mask where the foreground is represented by non-zero values.
-        - The function only considers polygons with at least 3 points (6 coordinates).
+        - The function assumes that the maskedArr is a binary mask where the
+            foreground is represented by non-zero values.
+        - The function only considers polygons with at least 3 points
+            (6 coordinates).
         - If no valid polygons are found, the function returns [None].
     """
-    contours, _ = cv2.findContours(maskedArr, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(
+        maskedArr, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     segmentation = []
     for contour in contours:
         # Valid polygons have >= 6 coordinates (3 points)
@@ -353,8 +467,9 @@ def polygon_from_mask(maskedArr): # https://github.com/hazirbas/coco-json-conver
             segmentation.append(contour.flatten().tolist())
     if len(segmentation) == 0:
         return [None]
-        
-    RLEs = mask.frPyObjects(segmentation, maskedArr.shape[0], maskedArr.shape[1])
+
+    RLEs = mask.frPyObjects(
+        segmentation, maskedArr.shape[0], maskedArr.shape[1])
     RLE = mask.merge(RLEs)
     area = mask.area(RLE)
     [x, y, w, h] = cv2.boundingRect(maskedArr)
@@ -362,23 +477,27 @@ def polygon_from_mask(maskedArr): # https://github.com/hazirbas/coco-json-conver
     return segmentation[0], [x, y, w, h], area
 
 
-def sort_objects_by(contours,parameter,ascending=True):
+def sort_objects_by(contours, parameter, ascending=True):
     """
-    Sorts a list of objects by a given parameter in ascending or descending order.
+    Sorts a list of objects by a given parameter in ascending or descending
+    order.
 
     Parameters:
         contours (list): A list of objects to be sorted.
         parameter (list): A list of parameters to sort the objects by.
-        ascending (bool, optional): Sort the objects in ascending order if True, descending order if False. Defaults to True.
+        ascending (bool, optional): Sort the objects in ascending order if
+            True, descending order if False. Defaults to True.
 
     Returns:
-        tuple: A tuple containing the sorted list of objects and the sorted list of parameters.
+        tuple: A tuple containing the sorted list of objects and the
+            sorted list of parameters.
     """
     sorted_contours = contours.copy()
     sorted_parameter = parameter.copy()
     for i in range(len(sorted_parameter)):
-        min_max = np.min(sorted_parameter[i:]) if ascending else np.max(sorted_parameter[i:])
-        for j in range(i,len(sorted_parameter)):
+        min_max = np.min(sorted_parameter[i:]) if ascending \
+            else np.max(sorted_parameter[i:])
+        for j in range(i, len(sorted_parameter)):
             if sorted_parameter[j] == min_max:
                 val = sorted_parameter[i]
                 sorted_parameter[i] = sorted_parameter[j]
@@ -390,10 +509,12 @@ def sort_objects_by(contours,parameter,ascending=True):
     return sorted_contours, sorted_parameter
 
 
-def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_name="",quiet=True):
+def non_maximum_suppression(
+        contours, scores, height, width, threshold=0.3,
+        output_name="", quiet=True):
     """
     Performs non-maximum suppression on a list of contours and scores.
-    
+
     Parameters:
         contours: A list of contours.
         scores: A list of scores corresponding to each contour.
@@ -401,18 +522,20 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
         width: The width of the image.
         threshold: The IOU threshold for suppression (default: 0.3).
         output_name: The name of the output file (default: "").
-        quiet: Whether to suppress intermediate print statements (default: True).
-    
+        quiet: Whether to suppress intermediate print statements
+            (default: True).
+
     Returns:
         suppressed_contours: A list of contours after suppression.
         suppressed_scores: A list of scores after suppression.
     """
     if not quiet:
         print(f"NMS IOU threshold: {threshold}")
-    sorted_contours, sorted_scores = sort_objects_by(contours,scores,ascending=False)
+    sorted_contours, sorted_scores = sort_objects_by(
+        contours, scores, ascending=False)
     n_objects = len(sorted_contours)
-    suppressed_contours, suppressed_scores, suppressed_indexes = [],[],[]
-    
+    suppressed_contours, suppressed_scores, suppressed_indexes = [], [], []
+
     nms_images = np.zeros((height, width), dtype=np.uint16)
     for i in range(n_objects):
         obs_color = 1
@@ -421,7 +544,7 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
         contour_i = sorted_contours[i]
         poly_i = Polygon(contour_i)
 
-        for j in range(i+1,n_objects):
+        for j in range(i+1, n_objects):
             if j in suppressed_indexes:
                 continue
             contour_j = sorted_contours[j]
@@ -438,9 +561,14 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
                     continue
             if polygon_intersection == 0:
                 continue
-            polygon_union = poly_i.union(poly_j).area
+
+            try:
+                polygon_union = poly_i.union(poly_j).area
+            except:
+                continue
+
             IOU = polygon_intersection / polygon_union 
-            
+
             if IOU > threshold:
                 if not quiet:
                     print(f"({i},{j}): {IOU}")
@@ -449,26 +577,16 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
                 if (output_name == ""):
                     continue
                 if obs_color == 1:
-                    cv2.fillPoly(nms_images,pts=[contour_i], color=1)
+                    cv2.fillPoly(nms_images, pts=[np.array(contour_i).astype(np.int32)], color=1)
                 obs_color += 10
-                cv2.fillPoly(nms_images,pts=[contour_j], color=obs_color)
-                
-    
+                cv2.fillPoly(nms_images, pts=[np.array(contour_j).astype(np.int32)], color=obs_color)
+
     if (output_name != ""):
-        from matplotlib import cm
-        from matplotlib.colors import ListedColormap
-        gist_ncar = cm.get_cmap('gist_ncar', 256)
-        newcolors = gist_ncar(np.linspace(0, 1, 256))
-        black = np.array([0, 0, 0, 1])
-        magneta = np.array([1, 0, 1, 1])
-        newcolors[0, :] = black
-        newcolors[255, :] = magneta
-        newcmp = ListedColormap(newcolors)
-        nuclei_cmap = newcmp
+        nuclei_cmap = color_map()
         plt.imshow(nms_images, cmap=nuclei_cmap, alpha=1)
-        plt.savefig(f"{output_name.split('.')[0]}.png", bbox_inches = 'tight',pad_inches = 0)
+        plt.savefig(output_name, bbox_inches='tight', pad_inches=0)
         plt.close()
-                
+
     for i in range(n_objects):
         if i not in suppressed_indexes:
             suppressed_contours.append(sorted_contours[i])
@@ -479,19 +597,27 @@ def non_maximum_suppression(contours,scores,height,width,threshold=0.3,output_na
     return suppressed_contours, suppressed_scores
 
 
-def pred_to_tiff(objects,height,width,size_filter=0,score_filter=0.,nms_threshold=0.3,output_name="",nms_name=""):
+def pred_to_tiff(
+        objects, height, width, size_filter=0, score_filter=0.,
+        nms_threshold=0.3, output_name="", nms_name=""):
     """
     Converts predicted objects to a TIFF image.
 
     Parameters:
-        objects (list): A list of dictionaries representing the predicted objects.
+        objects (list): A list of dictionaries representing the predicted
+            objects.
         height (int): The height of the output image.
         width (int): The width of the output image.
-        size_filter (int, optional): The minimum area required for an object to be included in the output. Defaults to 0.
-        score_filter (float, optional): The minimum score required for an object to be included in the output. Defaults to 0.0.
-        nms_threshold (float, optional): The threshold value for non-maximum suppression. Defaults to 0.3.
-        output_name (str, optional): The name of the output TIFF file. Defaults to "".
-        nms_name (str, optional): The name of the output file containing the non-maximum suppressed contours. Defaults to "".
+        size_filter (int, optional): The minimum area required for an object
+            to be included in the output. Defaults to 0.
+        score_filter (float, optional): The minimum score required for an
+            object to be included in the output. Defaults to 0.0.
+        nms_threshold (float, optional): The threshold value for non-maximum
+            suppression. Defaults to 0.3.
+        output_name (str, optional): The name of the output TIFF file.
+            Defaults to "".
+        nms_name (str, optional): The name of the output file containing
+            the non-maximum suppressed contours. Defaults to "".
 
     Returns:
         numpy.ndarray: A numpy array representing the resulting TIFF image.
@@ -516,14 +642,15 @@ def pred_to_tiff(objects,height,width,size_filter=0,score_filter=0.,nms_threshol
         # Score filter
         if score < score_filter:
             continue
-        
+
         maskedArr = mask.decode(obj_dict['segmentation'])
         poly_list = polygon_from_mask(maskedArr)[0]
         if poly_list is None:
             broken_poly_sum += 1
             continue
-        
-        contour_list = [[poly_list[i], poly_list[i+1]] for i in range(0,len(poly_list),2) ]
+
+        contour_list = [[poly_list[i], poly_list[i+1]]
+                        for i in range(0, len(poly_list), 2)]
         nd_contour = np.array(contour_list).astype("int64")
         poly = Polygon(nd_contour)
 
@@ -535,25 +662,27 @@ def pred_to_tiff(objects,height,width,size_filter=0,score_filter=0.,nms_threshol
         areas.append(poly.area)
         scores.append(score)
         object_id += 1
-    
+
     # Filter objects with Non-Maximum Suppression algorithm
-    s_contours, s_scores = non_maximum_suppression(contours,scores,height,width,nms_threshold,nms_name,1)
-    s_contours = sort_objects_by(s_contours,s_scores)[0]
-    
+    s_contours, s_scores = non_maximum_suppression(
+        contours, scores, height, width, nms_threshold, nms_name, 1)
+    s_contours = sort_objects_by(s_contours, s_scores)[0]
+
     object_id = 1
     for contour in s_contours:
-        cv2.fillPoly(masks,pts=[contour], color=object_id)
+        cv2.fillPoly(masks, pts=[contour], color=object_id)
         object_id += 1
-    
+
     if broken_poly_sum > 0:
-        print(f"Broken polygons on inference (less than 3 coordinate points): {broken_poly_sum}")
+        print(f"Broken polygons on inference (less than 3 coordinate points): \
+              {broken_poly_sum}")
 
     if output_name != "":
         tifffile.imwrite(output_name, masks)
     return masks
 
 
-def crop_fov(im,x1,x2,y1,y2):
+def crop_fov(im, x1, x2, y1, y2):
     """
     Crop a region of interest from an image.
 
@@ -570,7 +699,7 @@ def crop_fov(im,x1,x2,y1,y2):
     return im[int(y1):int(y2), int(x1):int(x2)]
 
 
-def filter_size(pred,min_area):
+def filter_size(pred, min_area):
     """
     Filters the input array `pred` based on the size of connected components.
 
@@ -592,7 +721,8 @@ def filter_size(pred,min_area):
 
 def metrics(tp, fp, fn):
     """
-    Calculates precision, recall, and F1-score based on true positives, false positives, and false negatives.
+    Calculates precision, recall, and F1-score based on true positives,
+    false positives, and false negatives.
 
     Parameters:
         tp (int): The number of true positives.
@@ -612,10 +742,10 @@ def metrics(tp, fp, fn):
         p = tp/(tp+fp)
         r = tp/(tp+fn)
         f1 = 2*(p*r)/(p+r)
-    return p,r,f1
+    return p, r, f1
 
 
-def scatter_error_plot(x,y,xerr,yerr,color,xlabel,ylabel,name):
+def scatter_error_plot(x, y, xerr, yerr, color, xlabel, ylabel, name):
     """
     Generate a scatter error plot.
 
@@ -639,7 +769,7 @@ def scatter_error_plot(x,y,xerr,yerr,color,xlabel,ylabel,name):
     plt.close()
 
 
-def histogram_plot(data,color,xlabel,ylabel,name):
+def histogram_plot(data, color, xlabel, ylabel, name):
     """
     Plots a histogram of the given data using the specified color.
 
@@ -660,7 +790,7 @@ def histogram_plot(data,color,xlabel,ylabel,name):
     plt.close()
 
 
-def scatter_plot(x,y,color,xlabel,ylabel,name,s=None):
+def scatter_plot(x, y, color, xlabel, ylabel, name, s=None):
     """
     Generate a scatter plot with the given data points.
 
@@ -673,14 +803,14 @@ def scatter_plot(x,y,color,xlabel,ylabel,name,s=None):
         name (str): The name of the file to save the plot as.
         s (int, optional): The size of the data points. Defaults to None.
     """
-    plt.scatter(x,y,color=color,s=s)
+    plt.scatter(x, y, color=color, s=s)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     plt.savefig(name)
     plt.close()
 
 
-def scatter_plot_with_regression(x,y,color,xlabel,ylabel,name):
+def scatter_plot_with_regression(x, y, color, xlabel, ylabel, name):
     """
     Create a scatter plot with a regression line.
 
@@ -695,7 +825,7 @@ def scatter_plot_with_regression(x,y,color,xlabel,ylabel,name):
     Returns:
         None
     """
-    df = pd.DataFrame(columns=[xlabel,ylabel])
+    df = pd.DataFrame(columns=[xlabel, ylabel])
     df[xlabel] = x
     df[ylabel] = y
     sns.lmplot(data=df, x=xlabel, y=ylabel, palette=[color])
@@ -705,7 +835,7 @@ def scatter_plot_with_regression(x,y,color,xlabel,ylabel,name):
     plt.close()
 
 
-def inference_analysis_plots(results,output_path):
+def inference_analysis_plots(results, output_path):
     """
     Generate inference analysis plots based on the results and save them to the specified output path.
 
@@ -716,7 +846,7 @@ def inference_analysis_plots(results,output_path):
     Returns:
         None
     """
-    precision,recall,f1,objs,gb_ratio = [],[],[],[],[]
+    precision, recall, f1, objs, gb_ratio = [],[],[],[],[]
     for i in range(len(results)-1):
         precision.append(results[i]["precision"])
         recall.append(results[i]["recall"])
@@ -737,7 +867,7 @@ def inference_analysis_plots(results,output_path):
     scatter_plot_with_regression(gb_ratio,recall,'orange','G/B Ratio','Recall',f"{output_path}/Recall_vs_gb-ratio.png")
     scatter_plot_with_regression(gb_ratio,f1,'orange','G/B Ratio','F1',f"{output_path}/F1-score_vs_gb-ratio.png")
 
-    n_cells_bins = [0,100,200,300,400,500,600,700,800,900,1000]
+    n_cells_bins = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     n_cells_x = [(n_cells_bins[i+1]-n_cells_bins[i])/2+n_cells_bins[i] for i in range(len(n_cells_bins)-1)]
     n_cells_xerr = [(n_cells_bins[i+1]-n_cells_bins[i])/2 for i in range(len(n_cells_bins)-1)]
     prec_n_cells = [None for c in range(len(n_cells_bins)-1)]
@@ -758,7 +888,7 @@ def inference_analysis_plots(results,output_path):
     scatter_error_plot(n_cells_x, f1_n_cells, n_cells_xerr, None, 'orange', 'Number of cells', 'F1', f"{output_path}/F1-score_vs_number-of-cells.png")
 
 
-def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_path,size_filter=25,score_filter=0.35,nms_threshold=0.3,quiet=True):
+def create_inference_analysis(data_path, gt_annotations, inf_annotations, output_path, size_filter=25, score_filter=0.35, nms_threshold=0.3, quiet=True, precision_threshold=0.7):
     """
     Creates an inference analysis for a given data set.
 
@@ -771,6 +901,7 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
         score_filter (float, optional): The score filter for the predicted annotations. Defaults to 0.35.
         nms_threshold (float, optional): The NMS threshold for the predicted annotations. Defaults to 0.3.
         quiet (bool, optional): Whether to suppress console output. Defaults to True.
+        precision_threshold (float, optional): The precision threshold for the predicted annotations. Defaults to 0.7.
 
     Returns:
         list: A list of dictionaries containing the analysis results.
@@ -779,7 +910,7 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
     print(f" - Get GT annotations")
     split_ids = get_split_ids(gt_annotations)
     pure_ids = [s[0] for s in split_ids]
-    gt_anns = get_gt_annotations(gt_annotations,pure_ids)
+    gt_anns = get_gt_annotations(gt_annotations, pure_ids)
 
     # Get predicted annotations
     print(f" - Get predicted annotations")
@@ -804,44 +935,44 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
         pred_ann = pred_anns[str(i)]
 
         # Transform them to 2D arrays
-        gt = annotation_poly_to_tiff(gt_ann,gt_ann['images'][0]['height'],gt_ann['images'][0]['width'],ann_type="All")
-        pred = pred_to_tiff(pred_ann,gt_ann['images'][0]['height'],gt_ann['images'][0]['width'],size_filter,score_filter,nms_threshold,nms_name=f"{nms_path}/{name}")
+        gt = annotation_poly_to_tiff(gt_ann, gt_ann['images'][0]['height'], gt_ann['images'][0]['width'], ann_type="All")
+        pred = pred_to_tiff(pred_ann, gt_ann['images'][0]['height'], gt_ann['images'][0]['width'], size_filter, score_filter, nms_threshold, nms_name=f"{nms_path}/{name}")
         im = skimage.io.imread(f"{data_path}/{name}")
         
         # Extract metrics
-        iou = get_iou(pred,gt,quiet)
-        tp, fp, fn = precision_at(0.7, iou,quiet)
+        iou = get_iou(pred, gt, quiet)
+        tp, fp, fn = precision_at(precision_threshold, iou, quiet)
         precision, recall, f1 = metrics(sum(tp), sum(fp), sum(fn))
 
         # Create intersection plots
         gt_per, gt_xor = get_intersections(gt,pred)
         file_path = f"{intersections_path}/intersections_{i}-{name.split('.')[0]}.png"
-        plot_intersections(gt,pred,gt_xor,im,file_path)
+        plot_intersections(gt, pred, gt_xor, im, file_path)
         plt.close()
         if (not quiet):
             print(f"TP, FP, FN:  {sum(tp)}, {sum(fp)}, {sum(fn)}")
-            print(f"pr, rc, f1:  {round(precision,2)}, {round(recall,2)}, {round(f1,2)}")
+            print(f"pr, rc, f1:  {round(precision, 2)}, {round(recall, 2)}, {round(f1, 2)}")
 
         sum_tp += sum(tp)
         sum_fp += sum(fp)
         sum_fn += sum(fn)
 
         r,g,b = get_image_channels(f"{data_path}/{name}")
-        gb_ratio = get_channel_ratios(g,b)
+        gb_ratio = get_channel_ratios(g, b)
         # Store results
         res = {
-            "image":name,
-            "image_id":i,
-            "intersection_path":file_path,
-            "gt_objects":len(np.unique(gt))-1,
-            "detected_objects":len(np.unique(pred))-1,
-            "green_blue_ratio":gb_ratio,
-            "tp":int(sum(tp)),
-            "fp":int(sum(fp)),
-            "fn":int(sum(fn)),
-            "precision":precision,
-            "recall":recall,
-            "f1":f1,
+            "image": name,
+            "image_id": i,
+            "intersection_path": file_path,
+            "gt_objects": len(np.unique(gt))-1,
+            "detected_objects": len(np.unique(pred))-1,
+            "green_blue_ratio": gb_ratio,
+            "tp": int(sum(tp)),
+            "fp": int(sum(fp)),
+            "fn": int(sum(fn)),
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
         }
         results.append(res)
 
@@ -849,35 +980,35 @@ def create_inference_analysis(data_path,gt_annotations,inf_annotations,output_pa
     print(f"\n - Global metrics")
     gPrec, gRec, gF1 = metrics(sum_tp, sum_fp, sum_fn)
     print(f"TP, FP, FN: {sum_tp}, {sum_fp}, {sum_fn}")
-    print(f"Precision:  {round(gPrec,2)}")
-    print(f"Recall:     {round(gRec,2)}")
-    print(f"F1 score:   {round(gF1,2)}")
+    print(f"Precision:  {round(gPrec, 2)}")
+    print(f"Recall:     {round(gRec, 2)}")
+    print(f"F1 score:   {round(gF1, 2)}")
     
     res = {
-            "image":"all",
-            "image_id":"",
-            "intersection_path":"",
-            "gt_objects":"",
-            "detected_objects":"",
-            "green_blue_ratio":None,
-            "tp":int(sum_tp),
-            "fp":int(sum_fp),
-            "fn":int(sum_fn),
-            "precision":gPrec,
-            "recall":gRec,
-            "f1":gF1,
+            "image": "all",
+            "image_id": "",
+            "intersection_path": "",
+            "gt_objects": "",
+            "detected_objects": "",
+            "green_blue_ratio": None,
+            "tp": int(sum_tp),
+            "fp": int(sum_fp),
+            "fn": int(sum_fn),
+            "precision": gPrec,
+            "recall": gRec,
+            "f1": gF1,
         }
     results.append(res)
     with open(f"{output_path}/results.json", 'w') as fRes:
         json.dump(results, fRes)
 
     # Precision, recall, F1 and other plots
-    inference_analysis_plots(results,output_path)
+    inference_analysis_plots(results, output_path)
 
     return results
 
 
-def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,output_path):
+def inference_cluster_analysis(results, cluster_file, cluster_column, image_column, output_path):
     """
     Perform cluster analysis on the results of an inference.
 
@@ -905,7 +1036,7 @@ def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,
     clusters.sort()
 
     # Loop over clusters
-    p_arr,r_arr,f1_arr,c_arr,c_size,n_gts,n_gts_err,gb_ratio_arr,gb_ratio_arr_err = [],[],[],[],[],[],[],[],[]
+    p_arr, r_arr, f1_arr, c_arr, c_size, n_gts, n_gts_err, gb_ratio_arr, gb_ratio_arr_err = [], [], [], [], [], [], [], [], []
     for c in clusters:
         # Extract cluster data as an array, filtered by the images we have available 
         cdf = df[df[cluster_column] == c]
@@ -919,7 +1050,7 @@ def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,
         os.system(f"mkdir {cluster_path}")
         
         # Extract TP, FP and FN per cluster
-        tp,fp,fn,gts,gb_ratio = 0,0,0,[],[]
+        tp, fp, fn, gts, gb_ratio = 0, 0, 0, [], []
         for img in arr:
             tp += results_per_image[img]['tp']
             fp += results_per_image[img]['fp']
@@ -929,7 +1060,7 @@ def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,
             os.system(f"cp {results_per_image[img]['intersection_path']} {cluster_path}")
 
         # Extract precision, recall and f1 per cluster
-        precision,recall,f1 = metrics(tp,fp,fn)
+        precision, recall, f1 = metrics(tp, fp, fn)
         p_arr.append(precision)
         r_arr.append(recall)
         f1_arr.append(f1)
@@ -939,14 +1070,14 @@ def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,
         n_gts_err.append(np.array(gts).std())
         gb_ratio_arr.append(np.array(gb_ratio).mean())
         gb_ratio_arr_err.append(np.array(gb_ratio).std())
-        print(f"Metrics (precis, recall, f1): {round(precision,2)}, {round(recall,2)}, {round(f1,2)}")
-        print(f"GT Objects: {round(np.array(gts).mean(),2)}")
-        print(f"G/B ratio: {round(np.array(gb_ratio).mean(),2)}")
+        print(f"Metrics (precis, recall, f1): {round(precision, 2)}, {round(recall, 2)}, {round(f1, 2)}")
+        print(f"GT Objects: {round(np.array(gts).mean(), 2)}")
+        print(f"G/B ratio: {round(np.array(gb_ratio).mean(), 2)}")
     
     # Precision, recall and F1-score per cluster
-    scatter_plot(c_arr, p_arr, 'orange', 'Cluster', 'Precision', f"{output_path}/Precision_vs_cluster.png",n_gts)
-    scatter_plot(c_arr, r_arr, 'orange', 'Cluster', 'Recall', f"{output_path}/Recall_vs_cluster.png",n_gts)
-    scatter_plot(c_arr, f1_arr, 'orange', 'Cluster', 'F1', f"{output_path}/F1-score_vs_cluster.png",n_gts)
+    scatter_plot(c_arr, p_arr, 'orange', 'Cluster', 'Precision', f"{output_path}/Precision_vs_cluster.png", n_gts)
+    scatter_plot(c_arr, r_arr, 'orange', 'Cluster', 'Recall', f"{output_path}/Recall_vs_cluster.png", n_gts)
+    scatter_plot(c_arr, f1_arr, 'orange', 'Cluster', 'F1', f"{output_path}/F1-score_vs_cluster.png", n_gts)
     scatter_error_plot(c_arr, n_gts, None, n_gts_err, 'orange', 'Cluster', 'GT Objects', f"{output_path}/GT-objects_vs_cluster.png")
     scatter_error_plot(c_arr, gb_ratio_arr, None, gb_ratio_arr_err, 'orange', 'Cluster', 'G/B Ratio', f"{output_path}/GB-ratio_vs_cluster.png")
 
@@ -959,7 +1090,7 @@ def inference_cluster_analysis(results,cluster_file,cluster_column,image_column,
     return df
 
 
-def get_channel_ratios(channel_1,channel_2,from_counts=False):
+def get_channel_ratios(channel_1, channel_2, from_counts=False):
     """
     Calculate the channel ratios between two given channels.
 

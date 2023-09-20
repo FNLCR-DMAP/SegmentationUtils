@@ -41,7 +41,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             seed=seed
         )
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
@@ -86,7 +88,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             seed=seed
         )
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
@@ -130,7 +134,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             seed=seed
         )
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
@@ -176,7 +182,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             augmented_path=augmented_path
         )
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)

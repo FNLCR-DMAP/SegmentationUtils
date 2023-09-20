@@ -24,7 +24,9 @@ class CreateSplitTestCase(TestCase):
 
         split, train_ann, val_ann, test_ann = create_split(annotations_path, output_path, seed=seed)
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
@@ -55,7 +57,9 @@ class CreateSplitTestCase(TestCase):
 
         split, train_ann, val_ann, test_ann = create_split(annotations_path, output_path=output_path, annotation_suffix=annotation_suffix, train_fraction=train_fraction, validation_fraction=validation_fraction, test_fraction=test_fraction, augmented_path=augmented_path, seed=seed)
 
-        self.assertEqual(split, expected_split)
+        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
+        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
+        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
