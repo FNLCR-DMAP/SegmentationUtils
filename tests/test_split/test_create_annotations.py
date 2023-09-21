@@ -9,16 +9,16 @@ from pyoseg.split import create_annotations
 class TestCreateAnnotations(unittest.TestCase):
     
     def test_default_case(self):
-        input_folder = "test_data/empty_folder"
-        output_file = "test_data/output_folder/output.json"
+        input_folder = os.path.dirname(os.path.realpath(__file__)) + "/test_data/empty_folder"
+        output_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder/output.json"
         
         # Call the function
         with self.assertRaises(FileNotFoundError):
             create_annotations(input_folder, output_file)
     
     def test_without_ids(self):
-        input_folder = "test_data/input_folder"
-        output_file = "test_data/output_folder/output.json"
+        input_folder = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder/output.json"
         ids = None
         expected_merged_data = {
             "images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}, {"file_name": "test_2.png", "height": 200, "width": 200, "id": 2}, {"file_name": "test_3.png", "height": 200, "width": 200, "id": 3}],
@@ -34,8 +34,8 @@ class TestCreateAnnotations(unittest.TestCase):
         self.assertTrue(os.path.exists(output_file))
     
     def test_with_ids(self):
-        input_folder = "test_data/input_folder"
-        output_file = "test_data/output_folder/output.json"
+        input_folder = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder/output.json"
         ids = ["1", "2"]
         expected_merged_data = {
             "images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}, {"file_name": "test_2.png", "height": 200, "width": 200, "id": 2}],
@@ -51,8 +51,8 @@ class TestCreateAnnotations(unittest.TestCase):
         self.assertTrue(os.path.exists(output_file))
     
     def test_with_custom_suffix(self):
-        input_folder = "test_data/input_folder"
-        output_file = "test_data/output_folder/output.json"
+        input_folder = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder/output.json"
         annotation_suffix = "_custom.json"
         
         # Call the function

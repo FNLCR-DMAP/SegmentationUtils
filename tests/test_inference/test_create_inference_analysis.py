@@ -8,7 +8,7 @@ from pyoseg.inference import create_inference_analysis
 class TestCreateInferenceAnalysis(unittest.TestCase):
 
     def setUp(self):
-        self.data_path = "../test_data/images"
+        self.data_path = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/images"
         self.output_path = ".tmp_inference_analysis"
 
         # Create output directory
@@ -21,8 +21,8 @@ class TestCreateInferenceAnalysis(unittest.TestCase):
             os.system(f"rm -r {self.output_path}")
 
     def test_create_inference_analysis_train(self):
-        gt_annotations = "../test_data/random_split/train_annotations.json"
-        inf_annotations = "../test_data/random_split/coco_instances_train.json"
+        gt_annotations = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/train_annotations.json"
+        inf_annotations = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/coco_instances_train.json"
         size_filter = 15
         score_filter = 0.06
         nms_threshold = 0.3
@@ -81,8 +81,8 @@ class TestCreateInferenceAnalysis(unittest.TestCase):
         self.assertEqual(results[2], expected_all)
 
     def test_create_inference_analysis_validation(self):
-        gt_annotations = "../test_data/random_split/validation_annotations.json"
-        inf_annotations = "../test_data/random_split/coco_instances_validation.json"
+        gt_annotations = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/validation_annotations.json"
+        inf_annotations = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/coco_instances_validation.json"
         size_filter = 0
         score_filter = 0.0
         nms_threshold = 0.3

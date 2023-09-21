@@ -2,6 +2,7 @@ import json
 import unittest
 import numpy as np
 from unittest.mock import mock_open, patch
+import os
 
 import sys
 sys.path.append("../../src")
@@ -37,7 +38,7 @@ class TestGetPredictionAnnotations(unittest.TestCase):
         expected_inner_keys = [
             'bbox', 'segmentation', 'score', 'image_id', 'category_id',
         ]
-        result = get_prediction_annotations("../test_data/random_split/coco_instances_train.json")
+        result = get_prediction_annotations(os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/coco_instances_train.json")
         self.assertEqual(set(result.keys()), set(expected_keys))
         for e in expected_keys:
             self.assertEqual(len(result[e]), predicted_objs)

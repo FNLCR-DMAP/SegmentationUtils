@@ -1,5 +1,6 @@
 import sys
 import unittest
+import os
 
 sys.path.append("../../src")
 from pyoseg.split import augment_ids
@@ -9,7 +10,7 @@ class TestAugmentIds(unittest.TestCase):
         train_ids = ['1']
         val_ids = ['2']
         test_ids = ['3']
-        augmented_path = 'test_data/augmentation_folder'
+        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
         annotation_suffix = '_coco.json'
         
         # Test case 1: ids in all sets
@@ -22,7 +23,7 @@ class TestAugmentIds(unittest.TestCase):
         train_ids = ['1', '2']
         val_ids = []
         test_ids = []
-        augmented_path = 'test_data/augmentation_folder'
+        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
         annotation_suffix = '_coco.json'
 
         # Test case 2: Only train IDs have augmented files
@@ -35,7 +36,7 @@ class TestAugmentIds(unittest.TestCase):
         train_ids = ['1', '2', '3']
         val_ids = ['1', '2']
         test_ids = ['3']
-        augmented_path = 'test_data/augmentation_folder'
+        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
         annotation_suffix = '_coco.json'
 
         # Test case 3: Only train and val IDs have augmented files, with aug_train_only=False

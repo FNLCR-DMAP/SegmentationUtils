@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 import pandas as pd
+import os
 
 import sys
 sys.path.append("../../src")
@@ -47,56 +48,10 @@ class TestPredToTiff(unittest.TestCase):
         width = 640
         mat = pred_to_tiff(objects["annotations"], height, width, size_filter=500)
         
-        df_expected = pd.read_csv("../test_data/pred_to_tiff.csv", header=None)
+        df_expected = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/../test_data/pred_to_tiff.csv", header=None)
         df_expected = df_expected.astype(np.int64)
         df = pd.DataFrame(mat).astype(np.int64)
         pd.testing.assert_frame_equal(df, df_expected)
-
-
-def test():
-    def test_pred_to_tiff_no_objs(self):
-        # Test case 4: Two objects, should be sorted by score and filled with object IDs
-        objects = [
-            {
-                'segmentation': {'size': (50, 50)},
-                'score': 0.8
-            },
-            {
-                'segmentation': {'size': (50, 50)},
-                'score': 0.6
-            }
-        ]
-        height = 100
-        width = 100
-        result = pred_to_tiff(objects, height, width)
-        expected_result = np.zeros((height, width), dtype=np.uint16)
-        expected_result[...] = 2
-        expected_result[25:75, 25:75] = 1
-        assert np.array_equal(result, expected_result)
-
-    def test_pred_to_tiff_no_objs(self):
-        # Test case 5: One object with broken polygon, should be skipped
-        objects = [
-            {
-                'segmentation': {'size': (50, 50)},
-                'score': 0.8
-            },
-            {
-                'segmentation': {'size': (50, 50)},
-                'score': 0.6
-            },
-            {
-                'segmentation': {'size': (50, 50)},
-                'score': 0.4
-            }
-        ]
-        height = 100
-        width = 100
-        result = pred_to_tiff(objects, height, width)
-        expected_result = np.zeros((height, width), dtype=np.uint16)
-        expected_result[...] = 3
-        expected_result[25:75, 25:75] = 2
-        assert np.array_equal(result, expected_result)
 
 
 if __name__ == '__main__':

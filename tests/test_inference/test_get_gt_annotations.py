@@ -2,6 +2,7 @@ import json
 import unittest
 import numpy as np
 from unittest.mock import mock_open, patch
+import os
 
 import sys
 sys.path.append("../../src")
@@ -44,7 +45,7 @@ class TestGetGtAnnotations(unittest.TestCase):
     def test_get_gt_annotations_test_file(self):
         expected_keys = ["1", "2"]
         expected_inner_keys = ["images", "annotations"]
-        result = get_gt_annotations("../test_data/random_split/train_annotations.json", [1, 2, 3, 4])
+        result = get_gt_annotations(os.path.dirname(os.path.realpath(__file__)) + "/../test_data/random_split/train_annotations.json", [1, 2, 3, 4])
         
         self.assertEqual(set(result.keys()), set(expected_keys))
         for e in expected_keys:

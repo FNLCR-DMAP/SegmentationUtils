@@ -1,6 +1,7 @@
 import unittest
 import sys
 import albumentations as A
+import os
 
 sys.path.append("../../src")
 from pyoseg.augmentation import create_augmentation_transform, augmentations

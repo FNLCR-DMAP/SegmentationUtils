@@ -8,11 +8,11 @@ from pyoseg.split import create_split_cluster
 class TestCreateSplitCluster(unittest.TestCase):
     def test_one_cluster(self):
         # Test with common split
-        cluster_file = "test_data/cluster.csv"
+        cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster.csv"
         cluster_column = "Label"
         image_column = "Image"
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.7
         validation_fraction = 0.2
@@ -55,11 +55,11 @@ class TestCreateSplitCluster(unittest.TestCase):
     def test_more_clusters(self):
         # Test with common split -> names 1,2,3: clusters 1,1,2
         # Test with images on csv files without annotations
-        cluster_file = "test_data/cluster_more.csv"
+        cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster_more.csv"
         cluster_column = "Label"
         image_column = "Image"
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.7
         validation_fraction = 0.2
@@ -101,11 +101,11 @@ class TestCreateSplitCluster(unittest.TestCase):
 
     def test_less_images(self):
         # Test with common split -> names 1,3: clusters 1,1
-        cluster_file = "test_data/cluster_less.csv"
+        cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster_less.csv"
         cluster_column = "Label"
         image_column = "Image"
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.7
         validation_fraction = 0.2
@@ -147,16 +147,16 @@ class TestCreateSplitCluster(unittest.TestCase):
 
     def test_augmentation(self):
         # Test with augmented split
-        cluster_file = "test_data/cluster.csv"
+        cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster.csv"
         cluster_column = "Label"
         image_column = "Image"
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.7
         validation_fraction = 0.2
         test_fraction = 0.1
-        augmented_path = "test_data/augmentation_folder"
+        augmented_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/augmentation_folder"
         seed = 42
 
         expected_split = {
