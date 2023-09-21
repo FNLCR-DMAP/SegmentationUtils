@@ -9,7 +9,6 @@ from pyoseg.inference import get_image_channels
 
 
 class TestGetImageChannels(unittest.TestCase):
-
     def test_get_image_channels_img1(self):
         # Test case 1: Test with a valid image file path
         file_path = os.path.dirname(os.path.realpath(__file__)) + '/../test_data/images/000000397133.jpg'
@@ -42,6 +41,7 @@ class TestGetImageChannels(unittest.TestCase):
         # Assert that a FileNotFoundError is raised
         with self.assertRaises(FileNotFoundError):
             get_image_channels(file_path)
+
 
 if __name__ == '__main__':
     unittest.main()
