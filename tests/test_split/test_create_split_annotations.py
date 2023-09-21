@@ -1,11 +1,11 @@
 import sys
 import os
-import json
 import unittest
 from unittest.mock import patch
 
 sys.path.append("../../src")
 from pyoseg.split import create_split_annotations
+
 
 class TestCreateSplitAnnotations(unittest.TestCase):
     def test_split_sizes(self):

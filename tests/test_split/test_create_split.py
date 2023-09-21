@@ -6,6 +6,7 @@ from unittest import TestCase
 sys.path.append("../../src")
 from pyoseg.split import create_split
 
+
 class CreateSplitTestCase(TestCase):
     def test_default_parameters(self):
         # Test with default parameters

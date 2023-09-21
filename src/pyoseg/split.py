@@ -93,8 +93,6 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
         for a in annotation_files:
             if a[:-to_rm] in ids:
                 fann.append(a)
-        if len(fann) > 0:
-            fann.sort()
         annotation_files = fann
 
     annotation_id = 1
@@ -103,6 +101,7 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
         if len(annotation_files) == 0:
             raise FileNotFoundError("No annotation files found in input folder.")
         
+        annotation_files.sort()
         image_id = 1
         for file in annotation_files:
             with open(os.path.join(input_folder, file), 'r') as f:
