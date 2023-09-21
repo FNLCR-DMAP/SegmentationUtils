@@ -54,7 +54,7 @@ class TestGetPredictionAnnotations(unittest.TestCase):
         expected_inner_keys = [
             'bbox', 'segmentation', 'score', 'image_id', 'category_id',
         ]
-        result = get_prediction_annotations("../test_data/coco_instances_results.json")
+        result = get_prediction_annotations(os.path.dirname(os.path.realpath(__file__)) + "/../test_data/coco_instances_results.json")
         self.assertEqual(set(result.keys()), set(expected_keys))
         for e in expected_keys:
             self.assertEqual(len(result[e]), predicted_objs)
