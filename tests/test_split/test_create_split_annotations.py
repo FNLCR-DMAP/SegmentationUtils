@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -9,7 +9,7 @@ from pyoseg.split import create_split_annotations
 
 class TestCreateSplitAnnotations(unittest.TestCase):
     def test_split_sizes(self):
-        train_ids = ["1","2"]
+        train_ids = ["1", "2"]
         val_ids = ["2"]
         test_ids = ["3"]
         annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder/"

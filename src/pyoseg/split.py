@@ -260,8 +260,9 @@ def create_split(
         arr[i] = arr[i][:-to_rm]
 
     # Shuffle the array
-    np.random.seed(seed)
-    np.random.shuffle(arr)
+    if seed >= 0:
+        np.random.seed(seed)
+        np.random.shuffle(arr)
 
     # Split the array
     train_ids, val_ids, test_ids = split_array(arr,size,validation_fraction,test_fraction)

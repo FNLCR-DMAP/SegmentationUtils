@@ -5,6 +5,7 @@ import unittest
 sys.path.append("../../src")
 from pyoseg.split import create_split_cluster
 
+
 class TestCreateSplitCluster(unittest.TestCase):
     def test_one_cluster(self):
         # Test with common split
@@ -192,6 +193,7 @@ class TestCreateSplitCluster(unittest.TestCase):
         self.assertTrue(os.path.exists(f"{output_path}/train_annotations.json"))
         self.assertTrue(os.path.exists(f"{output_path}/validation_annotations.json"))
         self.assertTrue(os.path.exists(f"{output_path}/test_annotations.json"))
+
 
 if __name__ == '__main__':
     unittest.main()

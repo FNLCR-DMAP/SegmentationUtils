@@ -58,5 +58,6 @@ class TestCreateAnnotations(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             create_annotations(input_folder, output_file, annotation_suffix=annotation_suffix)
 
+
 if __name__ == '__main__':
     unittest.main()
