@@ -93,6 +93,8 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
         for a in annotation_files:
             if a[:-to_rm] in ids:
                 fann.append(a)
+        if len(fann) > 0:
+            fann.sort()
         annotation_files = fann
 
     annotation_id = 1
