@@ -258,6 +258,9 @@ def create_split(
     to_rm = len(annotation_suffix)
     for i in range(len(arr)):
         arr[i] = arr[i][:-to_rm]
+    
+    if size > 0:
+        arr.sort()
 
     # Shuffle the array
     if seed >= 0:
