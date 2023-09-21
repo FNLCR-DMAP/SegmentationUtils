@@ -1,6 +1,5 @@
 import sys
 import unittest
-from unittest.mock import mock_open, patch
 import os
 
 sys.path.append("../../src")

@@ -55,7 +55,7 @@ class TestCreateSplitCluster(unittest.TestCase):
 
     def test_more_clusters(self):
         # Test with common split -> names 1,2,3: clusters 1,1,2
-        # Test with images on csv files without annotations
+        # Test with images on csv file without annotations
         cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster_more.csv"
         cluster_column = "Label"
         image_column = "Image"
