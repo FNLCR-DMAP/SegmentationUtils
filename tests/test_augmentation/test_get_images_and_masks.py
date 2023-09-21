@@ -66,5 +66,6 @@ class GetImagesAndMasksTestCase(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             get_images_and_masks(data_path, annotations_path)
 
+
 if __name__ == '__main__':
     unittest.main()

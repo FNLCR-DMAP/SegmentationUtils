@@ -7,6 +7,7 @@ import sys
 sys.path.append("../../src")
 from pyoseg.augmentation import augment_data
 
+
 class TestAugmentData(unittest.TestCase):
 
     def setUp(self):

@@ -23,5 +23,6 @@ class GetPolyFromSegmentationTests(unittest.TestCase):
         result = get_poly_from_segmentation(ann)
         self.assertIsNone(result)
 
+
 if __name__ == '__main__':
     unittest.main()

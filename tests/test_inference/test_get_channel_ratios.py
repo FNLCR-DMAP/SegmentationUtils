@@ -32,5 +32,6 @@ class TestChannelRatios(unittest.TestCase):
         expected_ratio = 1
         self.assertAlmostEqual(get_channel_ratios(channel_1, channel_2, from_counts=False), expected_ratio)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -28,7 +28,6 @@ class TestCreateAnnotations(unittest.TestCase):
         # Call the function
         merged_data = create_annotations(input_folder, output_file, ids)
         
-        # Assertions
         self.assertEqual(merged_data, expected_merged_data)
         self.assertTrue(os.path.exists(output_file))
     
@@ -45,7 +44,6 @@ class TestCreateAnnotations(unittest.TestCase):
         # Call the function
         merged_data = create_annotations(input_folder, output_file, ids)
         
-        # Assertions
         self.assertEqual(merged_data, expected_merged_data)
         self.assertTrue(os.path.exists(output_file))
     

@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../src")
 from pyoseg.augmentation import get_bbox_from_poly
 
+
 class TestGetBboxFromPoly(unittest.TestCase):
 
     def test_get_bbox_from_square_poly(self):
@@ -36,6 +37,7 @@ class TestGetBboxFromPoly(unittest.TestCase):
         poly = []
         expected_bbox = [0, 0, 0, 0]
         self.assertEqual(get_bbox_from_poly(poly), expected_bbox)
+
 
 if __name__ == '__main__':
     unittest.main()

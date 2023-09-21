@@ -53,5 +53,6 @@ class TestGetGtAnnotations(unittest.TestCase):
         self.assertEqual(len(result['1']['annotations']), 7)
         self.assertEqual(len(result['2']['annotations']), 14)
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -6,6 +6,7 @@ import os
 sys.path.append("../../src")
 from pyoseg.augmentation import create_augmentation_transform, augmentations
 
+
 class TestCreateAugmentationTransform(unittest.TestCase):
     def test_default_functions(self):
         # Testing with default functions, should return a composed augmentation transform

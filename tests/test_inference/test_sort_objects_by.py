@@ -40,5 +40,6 @@ class TestSortObjectsBy(unittest.TestCase):
         self.assertEqual(sorted_contours, expected_contours)
         self.assertEqual(sorted_parameter, expected_parameter)
 
+
 if __name__ == '__main__':
     unittest.main()

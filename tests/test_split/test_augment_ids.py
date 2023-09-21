@@ -5,6 +5,7 @@ import os
 sys.path.append("../../src")
 from pyoseg.split import augment_ids
 
+
 class TestAugmentIds(unittest.TestCase):
     def test_augment_ids_all(self):
         train_ids = ['1']

@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../src")
 from pyoseg.augmentation import get_area_from_poly
 
+
 class TestGetBboxFromPoly(unittest.TestCase):
 
     def test_get_area_from_poly1(self):
@@ -26,6 +27,7 @@ class TestGetBboxFromPoly(unittest.TestCase):
         # Test case 4: Polygon with 6 points, area should be 1
         poly4 = [(0, 0), (1, 0), (1, 1), (0.5, 1), (0.5, 0.5), (0, 1)]
         assert get_area_from_poly(poly4) == 1.
+
 
 if __name__ == '__main__':
     unittest.main()

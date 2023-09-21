@@ -1,7 +1,6 @@
 import os
 import sys
 import unittest
-from unittest.mock import patch
 
 sys.path.append("../../src")
 from pyoseg.split import create_split_annotations

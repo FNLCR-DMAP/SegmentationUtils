@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../src")
 from pyoseg.augmentation import mask_array
 
+
 class TestMaskArray(unittest.TestCase):
     
     def test_mask_array_simple(self):

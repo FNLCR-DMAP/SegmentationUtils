@@ -8,6 +8,7 @@ from pyoseg.split import create_split
 
 
 class CreateSplitTestCase(TestCase):
+    
     def test_default_parameters(self):
         # Test with default parameters
         annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"

@@ -34,5 +34,6 @@ class ReadAnnotationFileTestCase(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             read_annotation_file('nonexistent.json')
 
+
 if __name__ == '__main__':
     unittest.main()

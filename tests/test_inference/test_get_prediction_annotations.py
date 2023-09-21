@@ -60,5 +60,6 @@ class TestGetPredictionAnnotations(unittest.TestCase):
             self.assertEqual(len(result[e]), predicted_objs)
             self.assertEqual(set(result[e][0].keys()),set(expected_inner_keys))
 
+
 if __name__ == '__main__':
     unittest.main()
