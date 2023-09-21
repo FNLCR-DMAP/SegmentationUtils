@@ -1,6 +1,7 @@
 import numpy as np
 import unittest
 import pandas as pd
+import os
 
 import sys
 sys.path.append("../../src")
@@ -23,7 +24,7 @@ class TestAnnotationPolyToTiff(unittest.TestCase):
         }
         
         mat = annotation_poly_to_tiff(gt_ann, gt_ann['images'][0]['height'], gt_ann['images'][0]['width'], ann_type="All")
-        df_expected = pd.read_csv("../test_data/annotation_poly_to_tiff.csv", header=None)
+        df_expected = pd.read_csv(os.path.dirname(os.path.realpath(__file__)) + "/../test_data/annotation_poly_to_tiff.csv", header=None)
         df_expected = df_expected.astype(np.int64)
         df = pd.DataFrame(mat).astype(np.int64)
         pd.testing.assert_frame_equal(df, df_expected)

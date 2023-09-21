@@ -1,9 +1,9 @@
 import sys
-import math
 import unittest
 
 sys.path.append("../../src")
 from pyoseg.split import split_array
+
 
 class TestSplitArray(unittest.TestCase):
     def test_empty_array(self):
@@ -35,6 +35,7 @@ class TestSplitArray(unittest.TestCase):
         self.assertEqual(train, [1, 2, 3, 4, 5, 6, 7])
         self.assertEqual(val, [8, 9])
         self.assertEqual(test, [10])
+
 
 if __name__ == '__main__':
     unittest.main()

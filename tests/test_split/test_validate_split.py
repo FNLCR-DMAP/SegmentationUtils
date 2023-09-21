@@ -4,6 +4,7 @@ import unittest
 sys.path.append("../../src")
 from pyoseg.split import validate_split
 
+
 class TestValidateSplit(unittest.TestCase):
     def test_valid_split(self):
         # Testing valid split fractions
@@ -19,6 +20,7 @@ class TestValidateSplit(unittest.TestCase):
         testf = 0.3
         with self.assertRaises(ValueError):
             validate_split(trainf, valf, testf)
+
 
 if __name__ == '__main__':
     unittest.main()

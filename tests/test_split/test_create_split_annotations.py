@@ -1,19 +1,19 @@
-import sys
 import os
-import json
+import sys
 import unittest
 from unittest.mock import patch
 
 sys.path.append("../../src")
 from pyoseg.split import create_split_annotations
 
+
 class TestCreateSplitAnnotations(unittest.TestCase):
     def test_split_sizes(self):
-        train_ids = ["1","2"]
+        train_ids = ["1", "2"]
         val_ids = ["2"]
         test_ids = ["3"]
-        annotations_path = "test_data/input_folder/"
-        output_path = "test_data/output_folder/"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder/"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder/"
         annotation_suffix = "_coco.json"
 
         expected_split = {

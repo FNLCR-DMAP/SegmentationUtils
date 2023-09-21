@@ -27,7 +27,7 @@ class TestInferenceClusterAnalysis(unittest.TestCase):
             {'image': '000000397134.jpg', 'image_id': 3, 'intersection_path': '.tmp_inference_analysis/intersections/intersections_2-000000397134.png', 'gt_objects': 2, 'detected_objects': 3, 'green_blue_ratio': 0.8648174819979899, 'tp': 1, 'fp': 2, 'fn': 1, 'precision': 0.3333333333333333, 'recall': 0.5, 'f1': 0.4},
             {'image': 'all', 'image_id': '', 'intersection_path': '', 'gt_objects': '', 'detected_objects': '', 'green_blue_ratio': None, 'tp': 1, 'fp': 8, 'fn': 14, 'precision': 0.1111111111111111, 'recall': 0.06666666666666667, 'f1': 0.08333333333333334}
         ]
-        cluster_file = '../test_data/cluster.csv'
+        cluster_file = os.path.dirname(os.path.realpath(__file__)) + '/../test_data/cluster.csv'
         cluster_column = 'cluster'
         image_column = 'image'
 

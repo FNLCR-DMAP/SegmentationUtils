@@ -1,6 +1,7 @@
 import unittest
 from PIL import Image
 import numpy as np
+import os
 
 import sys
 sys.path.append("../../src")
@@ -11,7 +12,7 @@ class TestGetImageChannels(unittest.TestCase):
 
     def test_get_image_channels_img1(self):
         # Test case 1: Test with a valid image file path
-        file_path = '../test_data/images/000000397133.jpg'
+        file_path = os.path.dirname(os.path.realpath(__file__)) + '/../test_data/images/000000397133.jpg'
         r, g, b = get_image_channels(file_path)
         
         # Assert that the returned values are instances of PIL.Image.Image
@@ -24,7 +25,7 @@ class TestGetImageChannels(unittest.TestCase):
         
     def test_get_image_channels_img2(self):
         # Test case 2: Test with a different valid image file path
-        file_path = '../test_data/images//000000252219.jpg'
+        file_path = os.path.dirname(os.path.realpath(__file__)) + '/../test_data/images//000000252219.jpg'
         r, g, b = get_image_channels(file_path)
         
         # Assert that the returned values are instances of PIL.Image.Image

@@ -101,6 +101,7 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
         if len(annotation_files) == 0:
             raise FileNotFoundError("No annotation files found in input folder.")
         
+        annotation_files.sort()
         image_id = 1
         for file in annotation_files:
             with open(os.path.join(input_folder, file), 'r') as f:
@@ -257,10 +258,14 @@ def create_split(
     to_rm = len(annotation_suffix)
     for i in range(len(arr)):
         arr[i] = arr[i][:-to_rm]
+    
+    if size > 0:
+        arr.sort()
 
     # Shuffle the array
-    np.random.seed(seed)
-    np.random.shuffle(arr)
+    if seed >= 0:
+        np.random.seed(seed)
+        np.random.shuffle(arr)
 
     # Split the array
     train_ids, val_ids, test_ids = split_array(arr,size,validation_fraction,test_fraction)

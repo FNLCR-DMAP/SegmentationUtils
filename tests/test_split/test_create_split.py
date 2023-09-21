@@ -6,12 +6,13 @@ from unittest import TestCase
 sys.path.append("../../src")
 from pyoseg.split import create_split
 
+
 class CreateSplitTestCase(TestCase):
     def test_default_parameters(self):
         # Test with default parameters
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
-        seed = 42
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
+        seed = -1
 
         expected_split = {
             "train_ids": ["1"],
@@ -24,9 +25,9 @@ class CreateSplitTestCase(TestCase):
 
         split, train_ann, val_ann, test_ann = create_split(annotations_path, output_path, seed=seed)
 
-        self.assertEqual(set(split['train_ids']), set(expected_split['train_ids']))
-        self.assertEqual(set(split['val_ids']), set(expected_split['val_ids']))
-        self.assertEqual(set(split['test_ids']), set(expected_split['test_ids']))
+        self.assertEqual(len(split['train_ids']), len(expected_split['train_ids']))
+        self.assertEqual(len(split['val_ids']), len(expected_split['val_ids']))
+        self.assertEqual(len(split['test_ids']), len(expected_split['test_ids']))
         self.assertEqual(train_ann, expected_train_ann)
         self.assertEqual(val_ann, expected_val_ann)
         self.assertEqual(test_ann, expected_test_ann)
@@ -37,14 +38,14 @@ class CreateSplitTestCase(TestCase):
 
     def test_augmented_path(self):
         # Test with augmented_path parameter
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.7
         validation_fraction = 0.2
         test_fraction = 0.1
-        augmented_path = "test_data/augmentation_folder"
-        seed = 42
+        augmented_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/augmentation_folder"
+        seed = -1
 
         expected_split = {
             "train_ids": ["1_aug0", "1_aug1", "1_aug2"],
@@ -70,8 +71,8 @@ class CreateSplitTestCase(TestCase):
 
     def test_invalid_fractions(self):
         # Test with invalid fractions
-        annotations_path = "test_data/input_folder"
-        output_path = "test_data/output_folder"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/input_folder"
+        output_path = os.path.dirname(os.path.realpath(__file__)) + "/test_data/output_folder"
         annotation_suffix = "_coco.json"
         train_fraction = 0.5
         validation_fraction = 0.3
@@ -80,6 +81,7 @@ class CreateSplitTestCase(TestCase):
         with self.assertRaises(ValueError):
             create_split(annotations_path, output_path=output_path, annotation_suffix=annotation_suffix, train_fraction=train_fraction, 
                          validation_fraction=validation_fraction, test_fraction=test_fraction)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -20,8 +20,8 @@ class TestAugmentData(unittest.TestCase):
 
     def test_augment_data_default(self):
         # Test case 1: Test augmentation with valid parameters
-        data_path = "../test_data/images"
-        annotations_path = "../test_data/annotations"
+        data_path = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/images"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/annotations"
         output_path = self.tmp_dir
         annotation_suffix = "_coco.json"
         times = 2
@@ -42,71 +42,6 @@ class TestAugmentData(unittest.TestCase):
             self.assertTrue(os.path.exists(os.path.join(output_path, f"000000397133_aug{i}.jpg")))
             self.assertTrue(os.path.exists(os.path.join(output_path, f"000000397133_aug{i}{annotation_suffix}")))
 
-def idk():
-    def test_augment_data(self):
-        # Test case 2: Test augmentation with no masks
-        data_path = "data/images"
-        annotations_path = "data/masks"
-        output_path = "output"
-        annotation_suffix = "_coco.json"
-        functions = ["RandomCrop"]
-        times = 10
-        
-        # Remove the masks from the annotations path
-        
-        augment_data(
-            data_path, annotations_path, output_path,
-            annotation_suffix=annotation_suffix, functions=functions, times=times)
-        
-        # Check if the augmented images are saved in the output path
-        self.assertTrue(os.path.exists(output_path))
-        self.assertTrue(os.path.exists(os.path.join(output_path, "image1_aug0.png")))
-        self.assertTrue(os.path.exists(os.path.join(output_path, "image1_aug1.png")))
-        # Add more assertions for other augmented images
-    
-    def test_augment_data(self):
-        # Test case 3: Test augmentation with invalid augmentation function
-        data_path = "data/images"
-        annotations_path = "data/masks"
-        output_path = "output"
-        annotation_suffix = "_coco.json"
-        functions = ["InvalidFunction"]
-        times = 10
-        
-        # Remove the masks from the annotations path
-        
-        # Check if the augmentation function is invalid
-        with self.assertRaises(AssertionError):
-            augment_data(
-                data_path, annotations_path, output_path,
-                annotation_suffix=annotation_suffix, functions=functions, times=times)
-        
-        # Check if no augmented images are saved in the output path
-        self.assertTrue(os.path.exists(output_path))
-        self.assertFalse(os.path.exists(os.path.join(output_path, "image1_aug0.png")))
-        self.assertFalse(os.path.exists(os.path.join(output_path, "image1_aug1.png")))
-        # Add more assertions for other augmented images
-    
-    def test_augment_data(self):
-        # Test case 4: Test augmentation with invalid data and annotations paths
-        data_path = "invalid_path"
-        annotations_path = "invalid_path"
-        output_path = "output"
-        annotation_suffix = "_coco.json"
-        functions = ["RandomCrop"]
-        times = 10
-        
-        # Check if the data and annotations paths are invalid
-        with self.assertRaises(FileNotFoundError):
-            augment_data(
-                data_path, annotations_path, output_path,
-                annotation_suffix=annotation_suffix, functions=functions, times=times)
-        
-        # Check if no augmented images are saved in the output path
-        self.assertTrue(os.path.exists(output_path))
-        self.assertFalse(os.path.exists(os.path.join(output_path, "image1_aug0.png")))
-        self.assertFalse(os.path.exists(os.path.join(output_path, "image1_aug1.png")))
-        # Add more assertions for other augmented images
         
 if __name__ == '__main__':
     unittest.main()
