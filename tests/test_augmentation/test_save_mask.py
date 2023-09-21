@@ -6,8 +6,8 @@ import sys
 sys.path.append("../../src")
 from pyoseg.augmentation import save_mask
 
-class SaveMaskTestCase(unittest.TestCase):
 
+class SaveMaskTestCase(unittest.TestCase):
     def setUp(self):
         self.tmp_dir = ".tmp_test"
         if not os.path.exists(self.tmp_dir):
@@ -24,6 +24,7 @@ class SaveMaskTestCase(unittest.TestCase):
         self.assertTrue(os.path.exists(mask_path))
         read_mask = json.load(open(mask_path, 'r'))
         self.assertEqual(mask, read_mask)
+
 
 if __name__ == '__main__':
     unittest.main()
