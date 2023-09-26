@@ -1,10 +1,6 @@
 import os, sys
 
 sys.path.append("../src")
-import pyoseg
-from pyoseg.augmentation import augment_data
-from importlib import reload
-reload(pyoseg)
 from pyoseg.augmentation import augment_data
 
 
