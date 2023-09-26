@@ -5,6 +5,7 @@ __pycache__/
 .tmp/
 
 # Tests
+.pytest_cache
 
 # Environments
 .env
