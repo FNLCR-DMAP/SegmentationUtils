@@ -3,10 +3,18 @@ import os
 import unittest
 
 sys.path.append("../../src")
+import pyoseg.split as ps
 from pyoseg.split import create_split_cluster
 
 
 class TestCreateSplitCluster(unittest.TestCase):
+
+    def setUp(self):
+        ps.TEST_MODE = True
+
+    def tearDown(self):
+        ps.TEST_MODE = False
+
     def test_one_cluster(self):
         # Test with common split
         cluster_file = os.path.dirname(os.path.realpath(__file__)) + "/test_data/cluster.csv"
@@ -25,9 +33,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             "val_ids": ["2"],
             "test_ids": ["3"]
         }
-        expected_train_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 2, "image_id": 1, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_val_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_test_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_train_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 1, "image_id": 0, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_val_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_test_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
 
         split, train_ann, val_ann, test_ann = create_split_cluster(
             cluster_file=cluster_file,
@@ -72,8 +80,8 @@ class TestCreateSplitCluster(unittest.TestCase):
             "val_ids": ["1"],
             "test_ids": []
         }
-        expected_train_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 1}, {"file_name": "test_3.png", "height": 200, "width": 200, "id": 2}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}, {"id": 2, "image_id": 2, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_val_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 2, "image_id": 1, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_train_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 0}, {"file_name": "test_3.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}, {"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_val_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 1, "image_id": 0, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
         expected_test_ann = {"images": [], "annotations": [], "categories": []}
 
         split, train_ann, val_ann, test_ann = create_split_cluster(
@@ -118,8 +126,8 @@ class TestCreateSplitCluster(unittest.TestCase):
             "val_ids": ["1"],
             "test_ids": []
         }
-        expected_train_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_val_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 2, "image_id": 1, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_train_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_val_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 1, "image_id": 0, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
         expected_test_ann = {"images": [], "annotations": [], "categories": []}
 
         split, train_ann, val_ann, test_ann = create_split_cluster(
@@ -165,9 +173,9 @@ class TestCreateSplitCluster(unittest.TestCase):
             "val_ids": ["2_aug2"],
             "test_ids": ["3_aug2"]
         }
-        expected_train_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}, {"file_name": "test_1.png", "height": 200, "width": 200, "id": 2}, {"file_name": "test_1.png", "height": 200, "width": 200, "id": 3}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 2, "image_id": 1, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}, {"id": 3, "image_id": 2, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 4, "image_id": 2, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}, {"id": 5, "image_id": 3, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 6, "image_id": 3, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_val_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
-        expected_test_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 1}], "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_train_ann = {"images": [{"file_name": "test_1.png", "height": 200, "width": 200, "id": 0}, {"file_name": "test_1.png", "height": 200, "width": 200, "id": 1}, {"file_name": "test_1.png", "height": 200, "width": 200, "id": 2}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 1, "image_id": 0, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}, {"id": 2, "image_id": 1, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 3, "image_id": 1, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}, {"id": 4, "image_id": 2, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}, {"id": 5, "image_id": 2, "category_id": 1, "segmentation": [[100, 100, 101, 101, 100, 101]], "area": 3, "bbox": [101, 101, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_val_ann = {"images": [{"file_name": "test_2.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[50, 50]], "area": 1, "bbox": [50, 50, 1, 1], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
+        expected_test_ann = {"images": [{"file_name": "test_3.png", "height": 200, "width": 200, "id": 0}], "annotations": [{"id": 0, "image_id": 0, "category_id": 1, "segmentation": [[25, 25, 26, 26, 25, 26]], "area": 3, "bbox": [26.0, 26.0, 1.0, 1.0], "iscrowd": 0}], "categories": [{"id": 1, "name": "Category_1", "supercategory": "Super"}]}
         
         split, train_ann, val_ann, test_ann = create_split_cluster(
             cluster_file=cluster_file,
