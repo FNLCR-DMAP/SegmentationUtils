@@ -3,10 +3,18 @@ import sys
 import unittest
 
 sys.path.append("../../src")
+import pyoseg.split as ps
 from pyoseg.split import create_split_annotations
 
 
 class TestCreateSplitAnnotations(unittest.TestCase):
+
+    def setUp(self):
+        ps.TEST_MODE = True
+
+    def tearDown(self):
+        ps.TEST_MODE = False
+
     def test_split_sizes(self):
         train_ids = ["1", "2"]
         val_ids = ["2"]

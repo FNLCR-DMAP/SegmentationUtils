@@ -3,16 +3,17 @@ import unittest
 import os
 
 sys.path.append("../../src")
-from pyoseg.split import create_annotations, TEST_MODE
+import pyoseg.split as ps
+from pyoseg.split import create_annotations
 
 
 class TestCreateAnnotations(unittest.TestCase):
 
     def setUp(self):
-        TEST_MODE = True
+        ps.TEST_MODE = True
 
     def tearDown(self):
-        TEST_MODE = False
+        ps.TEST_MODE = False
         
     def test_default_case(self):
         input_folder = os.path.dirname(os.path.realpath(__file__)) + "/test_data/empty_folder"

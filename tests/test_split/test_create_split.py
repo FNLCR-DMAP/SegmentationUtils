@@ -4,16 +4,17 @@ import unittest
 from unittest import TestCase
 
 sys.path.append("../../src")
-from pyoseg.split import create_split, TEST_MODE
+import pyoseg.split as ps
+from pyoseg.split import create_split
 
 
 class CreateSplitTestCase(TestCase):
 
     def setUp(self):
-        TEST_MODE = True
+        ps.TEST_MODE = True
 
     def tearDown(self):
-        TEST_MODE = False
+        ps.TEST_MODE = False
     
     def test_default_parameters(self):
         # Test with default parameters

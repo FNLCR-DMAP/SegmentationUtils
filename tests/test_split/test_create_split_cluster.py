@@ -3,16 +3,17 @@ import os
 import unittest
 
 sys.path.append("../../src")
-from pyoseg.split import create_split_cluster, TEST_MODE
+import pyoseg.split as ps
+from pyoseg.split import create_split_cluster
 
 
 class TestCreateSplitCluster(unittest.TestCase):
 
     def setUp(self):
-        TEST_MODE = True
+        ps.TEST_MODE = True
 
     def tearDown(self):
-        TEST_MODE = False
+        ps.TEST_MODE = False
 
     def test_one_cluster(self):
         # Test with common split

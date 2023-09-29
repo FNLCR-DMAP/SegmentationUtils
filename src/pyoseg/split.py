@@ -342,7 +342,7 @@ def create_split_cluster(
             arr[i] = arr[i].split(".")[0]
 
         if TEST_MODE:
-            arr[i].sort()
+            arr.sort()
             
         # Shuffle the array
         if seed is not None and seed >= 0:
@@ -350,7 +350,7 @@ def create_split_cluster(
             np.random.shuffle(arr)
 
         # Split the array into groups
-        train_s, val_s, test_s = split_array(arr,size,validation_fraction,test_fraction)
+        train_s, val_s, test_s = split_array(arr, size, validation_fraction, test_fraction)
         train_ids.extend(train_s)
         val_ids.extend(val_s)
         test_ids.extend(test_s)
