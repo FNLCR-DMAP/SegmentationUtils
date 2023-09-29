@@ -2,6 +2,8 @@ import os, math, json
 import numpy as np
 import pandas as pd
 
+TEST_MODE = False
+
 def validate_split(trainf,valf,testf,e=1e-5):
     """
     Validate the split fractions.
@@ -67,7 +69,7 @@ def split_array(arr,size,vf,tf):
         return train, val, test
 
 
-def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coco.json"):
+def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_coco.json"):
     """
     Creates annotations for a given input folder and writes them to an output file.
     
@@ -95,14 +97,15 @@ def create_annotations(input_folder,output_file,ids=None,annotation_suffix="_coc
                 fann.append(a)
         annotation_files = fann
 
-    annotation_id = 1
-
     if ids is None or len(ids) != 0:
         if len(annotation_files) == 0:
             raise FileNotFoundError("No annotation files found in input folder.")
         
-        annotation_files.sort()
-        image_id = 1
+        if TEST_MODE:
+            annotation_files.sort()
+
+        image_id = 0
+        annotation_id = 0
         for file in annotation_files:
             with open(os.path.join(input_folder, file), 'r') as f:
                 data = json.load(f)
@@ -259,11 +262,11 @@ def create_split(
     for i in range(len(arr)):
         arr[i] = arr[i][:-to_rm]
     
-    if size > 0:
+    if TEST_MODE and size > 0:
         arr.sort()
 
     # Shuffle the array
-    if seed >= 0:
+    if seed is not None and seed >= 0:
         np.random.seed(seed)
         np.random.shuffle(arr)
 
@@ -334,12 +337,17 @@ def create_split_cluster(
         print(f"Size of cluster '{c}': {size}")
         if size == 0:
             continue
+
         for i in range(size):
             arr[i] = arr[i].split(".")[0]
 
+        if TEST_MODE:
+            arr[i].sort()
+            
         # Shuffle the array
-        np.random.seed(seed)
-        np.random.shuffle(arr)
+        if seed is not None and seed >= 0:
+            np.random.seed(seed)
+            np.random.shuffle(arr)
 
         # Split the array into groups
         train_s, val_s, test_s = split_array(arr,size,validation_fraction,test_fraction)
@@ -366,5 +374,5 @@ def get_split_ids(f):
     """
     with open(f,'r') as file:
         ann = json.load(file)
-    data = [(a['id'],a['file_name']) for a in ann['images']]
+    data = [(a['id'], a['file_name']) for a in ann['images']]
     return data
