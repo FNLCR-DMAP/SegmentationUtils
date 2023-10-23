@@ -10,6 +10,7 @@ Segmentation Utils is a repository that contains all code necessary to run insta
 To install the package, start by creating a conda environment:
 ```bash
 conda create -n pyoseg python==3.11
+conda activate pyoseg
 ```
 
 And install the pyoseg package by using:
@@ -89,26 +90,11 @@ config, train_ann, val_ann, test_ann = create_split(
     output_path=output_path,
     train_fraction=0.7,
     validation_fraction=0.2,
-    test_fraction=0.1)
-```
-
-In case you have created an augmented dataset using pyoseg (next session), you can create an split based on these augmented annotations as well, for this purpose you will need to insert an additional information: the path where the augmented dataset is:
-```python
-from pyoseg.split import create_split
-
-annotations_path = "../data/coco_annotations"
-output_path = "random_split"
-augmented_path = "../data/aug_data"  
-
-os.system(f"mkdir {output_path}")
-config, train_ann, val_ann, test_ann = create_split(
-    annotations_path=annotations_path,
-    output_path=output_path,
-    train_fraction=0.7,
-    validation_fraction=0.2,
     test_fraction=0.1,
-    augmented_path=augmented_path)
+    augmentation=None)
 ```
+
+In case you want to creat a split of an augmented dataset using pyoseg (next session), you can insert an additional argument: an augmentation config file, which will be discussed later.
 
 #### iii. Based on a clustering file
 
@@ -132,15 +118,13 @@ output_path = "cluster_split"
 cluster_file = "../data/Membrane_small_img_clusters.csv"
 cluster_column = 'PhenoGraph_clusters'
 image_column = 'Images'
-augmented_path = "augmented_dataset" # optional
 
 os.system(f"mkdir {output_path}")
 config, train_ann, val_ann, test_ann = create_split_cluster(
     cluster_file=cluster_file, cluster_column=cluster_column, image_column=image_column,
     output_path=output_path, annotations_path=annotations_path,
     train_fraction=0.7, validation_fraction=0.2, test_fraction=0.1,
-    augmented_path=None)
-# augmented path is optional, just in case we have an augmented dataset
+    augmentation=None)
 ```
 
 ### 2 - Augmentation
@@ -181,6 +165,32 @@ augmented_dictionary = {
 ```
 
 The code will be looking for this dictionary to perform the augmentations. You can personalize the probabilities of each augmentation function and their order, if needed.
+
+To use both functionalities of creating an agumented dataset and the merged split annotations, just create a configuration variable:
+```python
+augmentation = {
+    "input_path": "../data/full_data",
+    "train": {
+        "functions": [
+            "RandomCrop", "HorizontalFlip", "VerticalFlip", "RandomRotate90",
+            "GridDistortion", "Blur", "RandomBrightnessContrast", "RandomGamma"],
+        "times": 2},
+    "val": {
+        "functions": ["RandomCrop"],
+        "times": 1},
+    "test": {
+        "functions": ["RandomCrop"],
+        "times": 1}
+}
+```
+To determine where are the images (input_path), what augmentation functions and the number of applications to use for training, validation and testing. After creating this variable, just insert it as an aditional argument to the split functions:
+```python
+config, train_ann, val_ann, test_ann = create_split_cluster(
+    cluster_file=cluster_file, cluster_column=cluster_column, image_column=image_column,
+    output_path=output_path, annotations_path=annotations_path,
+    train_fraction=0.7, validation_fraction=0.2, test_fraction=0.1
+    augmentation=augmentation)
+``` 
 
 ### 3 - Instance Segmentation
 

@@ -10,7 +10,7 @@ annotations_path = "../data/coco_annotations/"      # path for the annotations i
 data_path = "../data/full_data/"                    # path for the images folder
 output_path = "augmented_dataset"                   # path for output folder
 functions = [                                       # list of augmentation functions
-    "HorizontalFlip", "VerticalFlip", "RandomRotate90", "GridDistortion",
+    "RandomCrop", "HorizontalFlip", "VerticalFlip", "RandomRotate90", "GridDistortion",
     "Blur", "RandomBrightnessContrast", "RandomGamma"]
 
 os.system(f"mkdir {output_path}")

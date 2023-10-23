@@ -1,10 +1,11 @@
 import os, math, json
 import numpy as np
 import pandas as pd
+from pyoseg.augmentation import augment_data
 
 TEST_MODE = False
 
-def validate_split(trainf,valf,testf,e=1e-5):
+def validate_split(trainf, valf, testf, e=1e-5):
     """
     Validate the split fractions.
     
@@ -69,7 +70,7 @@ def split_array(arr,size,vf,tf):
         return train, val, test
 
 
-def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_coco.json"):
+def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_coco.json", random=False):
     """
     Creates annotations for a given input folder and writes them to an output file.
     
@@ -78,6 +79,7 @@ def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_
         output_file (str): The path to the output file where the annotations will be written.
         ids (list, optional): A list of specific ids to include in the annotations. Defaults to None.
         annotation_suffix (str, optional): The suffix for the annotation files. Defaults to "_coco.json".
+        random (bool, optional): Whether to create in random order. Defaults to False.
         
     Returns:
         dict: The merged data containing the images, annotations, and categories.
@@ -99,7 +101,9 @@ def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_
 
     if ids is None or len(ids) != 0:
         if len(annotation_files) == 0:
-            raise FileNotFoundError("No annotation files found in input folder.")
+            raise FileNotFoundError(f"No annotation files found in input folder {input_folder}.")
+        if random:
+            annotation_files = np.random.permutation(annotation_files)
         
         if TEST_MODE:
             annotation_files.sort()
@@ -136,7 +140,7 @@ def create_annotations(input_folder, output_file, ids=None, annotation_suffix="_
     return merged_data
 
 
-def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix):
+def create_split_annotations(train_ids, val_ids, test_ids, annotations_path, output_path, annotation_suffix, augmentation=None):
     """
     Create split annotations.
 
@@ -147,6 +151,7 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
         annotations_path (str): Path to the annotations file.
         output_path (str): Path to the output directory.
         annotation_suffix (str): Annotation suffix.
+        augmentation (dict): Configuration on how to augment the data.
 
     Returns:
         tuple: A tuple containing the split configuration and the merged annotations for training, validation, and testing.
@@ -154,18 +159,28 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
     # Print split sizes
 
     # Save split into a json file
-    config = {'train_ids':train_ids, 'val_ids':val_ids, 'test_ids':test_ids}
+    config = {'train_ids': train_ids, 'val_ids': val_ids, 'test_ids': test_ids}
     with open(f"{output_path}/split.json", "w") as outfile:
         json.dump(config, outfile, indent=4)
+
+    train_path, val_path, test_path = annotations_path, annotations_path, annotations_path
+    if augmentation is not None:
+        ids, paths = augment_ids(
+            config, annotations_path, output_path, annotation_suffix, augmentation, shuffle=True)
+        train_ids, val_ids, test_ids = ids["train_ids"], ids["val_ids"], ids["test_ids"]
+        train_path, val_path, test_path = paths["train_ids"], paths["val_ids"], paths["test_ids"]
     
     # Create the merged annotation file for each set
     print(f" > Split sizes:")
     print(f"Training split size:         {len(train_ids)}")
-    train_ann = create_annotations(annotations_path, f"{output_path}/train_annotations.json",      train_ids, annotation_suffix)
+    train_ann = create_annotations(
+        train_path, f"{output_path}/train_annotations.json", train_ids, annotation_suffix)
     print(f"Validation split size:       {len(val_ids)}")
-    val_ann   = create_annotations(annotations_path, f"{output_path}/validation_annotations.json", val_ids,   annotation_suffix)
+    val_ann = create_annotations(
+        val_path, f"{output_path}/validation_annotations.json", val_ids, annotation_suffix)
     print(f"Testing split size:          {len(test_ids)}")
-    test_ann  = create_annotations(annotations_path, f"{output_path}/test_annotations.json",       test_ids,  annotation_suffix)
+    test_ann = create_annotations(
+        test_path, f"{output_path}/test_annotations.json", test_ids, annotation_suffix)
 
     # Assert that split size and merged size are the same
     if len(train_ids) != len(train_ann['images']) or len(val_ids) != len(val_ann['images']) or len(test_ids) != len(test_ann['images']):
@@ -174,57 +189,36 @@ def create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_
     return config, train_ann, val_ann, test_ann
 
 
-def augment_ids(train_ids, val_ids, test_ids, augmented_path, annotation_suffix, shuffle=True, aug_train_only=True):
-    """
-    Augments the given IDs with additional IDs from the augmented_path directory.
-    
-    Parameters:
-        train_ids (list): The list of train IDs.
-        val_ids (list): The list of validation IDs.
-        test_ids (list): The list of test IDs.
-        augmented_path (str): The path to the directory containing augmented files.
-        shuffle (bool, optional): Whether to shuffle the augmented files. Defaults to True.
-        annotation_suffix (str): The suffix of annotated files.
-    
-    Returns:
-        tuple: A tuple containing the augmented train IDs, augmented validation IDs, 
-               and augmented test IDs.
-    """
-    aug_train_ids, aug_val_ids, aug_test_ids = [], [], []
-    augmented_files = [f[:-len(annotation_suffix)] for f in os.listdir(augmented_path) if f.endswith(annotation_suffix)]
-    for tid in train_ids:
-        to_include = [a for a in augmented_files if a.startswith(tid)]
-        if len(to_include) > 0:
-            np.random.shuffle(to_include)
-            aug_train_ids.extend(to_include)
-    
-    for vid in val_ids:
-        to_include = [a for a in augmented_files if a.startswith(vid)]
-        if len(to_include) > 0:
-            to_include.sort()
-            if aug_train_only:
-                to_include = [t for t in to_include if t.endswith(f"aug{len(to_include)-1}")]
-                aug_val_ids.append(to_include[0])
-            else:
-                aug_val_ids.extend(to_include)
+def augment_ids(split, annotations_path, output_path, annotation_suffix, augmentation, shuffle=True):
 
-    for tid in test_ids:
-        to_include = [a for a in augmented_files if a.startswith(tid)]
-        if len(to_include) > 0:
-            to_include.sort()
-            if aug_train_only:
-                to_include = [t for t in to_include if t.endswith(f"aug{len(to_include)-1}")]
-                aug_test_ids.append(to_include[0])
-            else:
-                aug_test_ids.extend(to_include)
+    dir_data = augmentation["input_path"]
+    dir_anns = annotations_path
+    ids = {}
+    paths = {}
 
-    if shuffle:
-        np.random.shuffle(aug_train_ids)
-        if not aug_train_only:
-            np.random.shuffle(aug_val_ids)
-            np.random.shuffle(aug_test_ids)
+    for key in split.keys():
+        os.makedirs(f"{output_path}/{key}", exist_ok=True)
+        os.makedirs(f"{output_path}/{key}/data", exist_ok=True)
+        os.makedirs(f"{output_path}/{key}/annotations", exist_ok=True)
+        for file in split[key]:
+            os.system(f"cp {dir_data}/{file}.png {output_path}/{key}/data")
+            os.system(f"cp {dir_anns}/{file}_coco.json {output_path}/{key}/annotations")
 
-    return aug_train_ids, aug_val_ids, aug_test_ids
+        i_path = f"{output_path}/{key}/augmented"
+        paths[key] = i_path
+        os.makedirs(i_path, exist_ok=True)
+        augment_data(
+            data_path = f"{output_path}/{key}/data",
+            annotations_path = f"{output_path}/{key}/annotations",
+            output_path = i_path,
+            functions = augmentation[key.split('_')[0]]["functions"],
+            times = augmentation[key.split('_')[0]]["times"])
+        i_id = [f[:-len(annotation_suffix)] for f in os.listdir(f"{output_path}/{key}/augmented") if annotation_suffix in f]
+        if shuffle:
+            i_id = np.random.permutation(i_id)
+        ids[key] = i_id
+
+    return ids, paths
 
 
 def create_split(
@@ -235,7 +229,7 @@ def create_split(
         validation_fraction = 0.2,
         test_fraction       = 0.1,
         seed                = None,
-        augmented_path      = None):
+        augmentation        = None):
     """
     Create a train/validation/test split of annotation files.
 
@@ -246,14 +240,14 @@ def create_split(
         train_fraction (float, optional): The fraction of data to be included in the training set. Defaults to 0.7.
         validation_fraction (float, optional): The fraction of data to be included in the validation set. Defaults to 0.2.
         test_fraction (float, optional): The fraction of data to be included in the test set. Defaults to 0.1.
-        augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
+        augmentation (dict): Configuration on how to augment the data. Defaults to None.
         seed (int): The seed for the random number generator. Defaults to None.
 
     Returns:
         The annotations for the split, based on the specified fractions.
     """
     # Validate fractions
-    validate_split(train_fraction,validation_fraction,test_fraction)
+    validate_split(train_fraction, validation_fraction, test_fraction)
 
     # Get annotation file ids
     arr = [f for f in os.listdir(annotations_path) if annotation_suffix in f]
@@ -271,13 +265,10 @@ def create_split(
         np.random.shuffle(arr)
 
     # Split the array
-    train_ids, val_ids, test_ids = split_array(arr,size,validation_fraction,test_fraction)
+    train_ids, val_ids, test_ids = split_array(arr,size, validation_fraction, test_fraction)
 
     # Create the annotations based on the split
-    if augmented_path is not None:
-        train_ids,val_ids,test_ids = augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix)
-        annotations_path = augmented_path
-    return create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix)
+    return create_split_annotations(train_ids, val_ids, test_ids, annotations_path, output_path, annotation_suffix, augmentation)
 
 
 def create_split_cluster(
@@ -291,7 +282,7 @@ def create_split_cluster(
         validation_fraction = 0.2,
         test_fraction       = 0.1,
         seed                = None,
-        augmented_path      = None):
+        augmentation        = None):
     """
     Create split clusters based on a clustering file and annotation images.
     
@@ -306,13 +297,13 @@ def create_split_cluster(
         validation_fraction (float): Fraction of the data to use for validation (default is 0.2).
         test_fraction (float): Fraction of the data to use for testing (default is 0.1).
         seed (int): The seed for the random number generator. Defaults to None.
-        augmented_path (str): The path to the directory containing the augmented annotation files. Defaults to None.
+        augmentation (str): The configuration on how to augment the data. Defaults to None.
     
     Returns:
         str: Path to the created split annotations file.
     """
     # Validate fractions
-    validate_split(train_fraction,validation_fraction,test_fraction)
+    validate_split(train_fraction, validation_fraction, test_fraction)
 
     # Get annotation file ids
     current_imgs = np.array([f for f in os.listdir(annotations_path) if annotation_suffix in f])
@@ -356,23 +347,4 @@ def create_split_cluster(
         test_ids.extend(test_s)
 
     # Create the annotations based on the split
-    if augmented_path is not None:
-        train_ids,val_ids,test_ids = augment_ids(train_ids,val_ids,test_ids,augmented_path,annotation_suffix)
-        annotations_path = augmented_path
-    return create_split_annotations(train_ids,val_ids,test_ids,annotations_path,output_path,annotation_suffix)
-
-
-def get_split_ids(f):
-    """
-    Reads a JSON file and extracts the 'id' and 'file_name' values from each image object.
-
-    Parameters:
-        f (str): The path to the JSON file.
-
-    Returns:
-        list: A list of tuples containing the 'id' and 'file_name' values for each image.
-    """
-    with open(f,'r') as file:
-        ann = json.load(file)
-    data = [(a['id'], a['file_name']) for a in ann['images']]
-    return data
+    return create_split_annotations(train_ids, val_ids, test_ids, annotations_path, output_path, annotation_suffix, augmentation)

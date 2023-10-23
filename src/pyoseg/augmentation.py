@@ -112,12 +112,12 @@ def create_augmentation_transform(functions=augmentations.keys()):
             raise KeyError(
                 f"Please provide a valid augmentation function: {f}.")
     return A.Compose([augmentations[f] for f in functions])
-
+    
 
 def augment_data(
         data_path, annotations_path, output_path,
         annotation_suffix="_coco.json", functions=augmentations.keys(),
-        times=10):
+        times=10, include_original=False):
     """
     Augments data by applying a list of specified augmentation functions to
     the images and masks.
@@ -156,15 +156,17 @@ def augment_data(
         n_aug = times
         mask0["images"][0]['file_name'] = f"{images[i]}_aug{n_aug}{extension}"
 
-        cv2.imwrite(f"{output_path}/{images[i]}_aug{n_aug}{extension}", image)
-        save_mask(
-            f"{output_path}/{images[i]}_aug{n_aug}{annotation_suffix}", mask0)
         gt_image = Image.fromarray(np.uint8(image.copy()))
         gt = annotation_poly_to_tiff(
-            mask0, mask0['images'][0]['height'], mask0['images'][0]['width'],
-            ann_type="All")
-        #plot_gt_image(
-        #    gt_image, gt, f"{output_path}/GT_{images[i]}_aug{n_aug}.png")
+                mask0, mask0['images'][0]['height'], mask0['images'][0]['width'],
+                ann_type="All")
+
+        if include_original or times == 0:
+            cv2.imwrite(f"{output_path}/{images[i]}_aug{n_aug}{extension}", image)
+            save_mask(
+                f"{output_path}/{images[i]}_aug{n_aug}{annotation_suffix}", mask0)
+            plot_gt_image(
+                gt_image, gt, f"{output_path}/GT_{images[i]}_aug{n_aug}.png")
 
         has_masks = np.sum(gt) != 0
         if not has_masks:
@@ -221,10 +223,10 @@ def augment_data(
             gt = annotation_poly_to_tiff(
                 mask, mask['images'][0]['height'],
                 mask['images'][0]['width'], ann_type="All")
-            #plot_gt_image(i_image, gt, tmp_gt_name)
+            plot_gt_image(i_image, gt, tmp_gt_name)
             idx += 1
 
-        del image, mask0, gt_image, gt, output_images, output_masks
+        del image, mask0, gt, output_images, output_masks
         _ = gc.collect()
 
 
