@@ -33,6 +33,31 @@ class TestAugmentData(unittest.TestCase):
         
         # Check if the augmented images and masks are saved in the output path
         self.assertTrue(os.path.exists(output_path))
+        for i in range(times):
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000087038_aug{i}.jpg")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000087038_aug{i}{annotation_suffix}")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000174482_aug{i}.jpg")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000174482_aug{i}{annotation_suffix}")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000252219_aug{i}.jpg")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000252219_aug{i}{annotation_suffix}")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000397133_aug{i}.jpg")))
+            self.assertTrue(os.path.exists(os.path.join(output_path, f"000000397133_aug{i}{annotation_suffix}")))
+    
+    def test_augment_data_include_original(self):
+        # Test case 1: Test augmentation with valid parameters
+        data_path = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/images"
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + "/../test_data/annotations"
+        output_path = self.tmp_dir
+        annotation_suffix = "_coco.json"
+        times = 2
+        
+        augment_data(
+            data_path, annotations_path, output_path,
+            annotation_suffix=annotation_suffix, times=times,
+            include_original=True)
+        
+        # Check if the augmented images and masks are saved in the output path
+        self.assertTrue(os.path.exists(output_path))
         for i in range(times+1):
             self.assertTrue(os.path.exists(os.path.join(output_path, f"000000087038_aug{i}.jpg")))
             self.assertTrue(os.path.exists(os.path.join(output_path, f"000000087038_aug{i}{annotation_suffix}")))

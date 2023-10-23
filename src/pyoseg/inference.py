@@ -12,7 +12,6 @@ import tifffile
 import skimage
 from shapely.geometry import Polygon
 from skimage.color import rgb2gray
-from pyoseg.split import get_split_ids
 from PIL import Image
 
 
@@ -1121,3 +1120,19 @@ def get_image_channels(file):
     img = img.convert('RGB')
     r,g,b = img.split()
     return r,g,b
+
+
+def get_split_ids(f):
+    """
+    Reads a JSON file and extracts the 'id' and 'file_name' values from each image object.
+
+    Parameters:
+        f (str): The path to the JSON file.
+
+    Returns:
+        list: A list of tuples containing the 'id' and 'file_name' values for each image.
+    """
+    with open(f,'r') as file:
+        ann = json.load(file)
+    data = [(a['id'], a['file_name']) for a in ann['images']]
+    return data

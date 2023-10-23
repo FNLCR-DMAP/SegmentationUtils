@@ -4,48 +4,102 @@ import os
 
 sys.path.append("../../src")
 from pyoseg.split import augment_ids
+import pyoseg.augmentation as paug
+from albumentations import RandomCrop
 
 
 class TestAugmentIds(unittest.TestCase):
+
+    def setUp(self):
+        self.old_crop = paug.augmentations["RandomCrop"]
+        paug.augmentations["RandomCrop"] =  RandomCrop(p=1., height=100, width=100)
+        self.tmp_dir = ".tmp_test"
+        if not os.path.exists(self.tmp_dir):
+            os.mkdir(self.tmp_dir)
+        
+        self.augmentation = {
+            "input_path": os.path.dirname(os.path.realpath(__file__)) + '/test_data/input_images_folder',
+            "train": {
+                "functions": [
+                    "RandomCrop", "HorizontalFlip", "VerticalFlip", "RandomRotate90",
+                    "GridDistortion", "Blur", "RandomBrightnessContrast", "RandomGamma"],
+                "times": 2},
+            "val": {
+                "functions": ["RandomCrop"],
+                "times": 1},
+            "test": {
+                "functions": ["RandomCrop"],
+                "times": 1}
+        }
+
+    def tearDown(self):
+        paug.augmentations["RandomCrop"] = self.old_crop
+        if os.path.exists(self.tmp_dir):
+            os.system(f"rm -r {self.tmp_dir}")
+
     def test_augment_ids_all(self):
         train_ids = ['1']
         val_ids = ['2']
         test_ids = ['3']
-        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
+        split = {"train_ids": train_ids, "val_ids": val_ids, "test_ids": test_ids}
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/input_folder'
+        output_path = self.tmp_dir
         annotation_suffix = '_coco.json'
         
         # Test case 1: ids in all sets
-        aug_train_ids, aug_val_ids, aug_test_ids = augment_ids(train_ids, val_ids, test_ids, augmented_path, annotation_suffix)
-        self.assertEqual(set(aug_train_ids), set(['1_aug0', '1_aug1', '1_aug2']))
-        self.assertEqual(aug_val_ids, ['2_aug2'])
-        self.assertEqual(aug_test_ids, ['3_aug2'])
-    
+        ids, paths = augment_ids(split, annotations_path, output_path, annotation_suffix, self.augmentation)
+        self.assertEqual(set(ids["train_ids"]), set(['1_aug0', '1_aug1']))
+        self.assertEqual(set(ids["val_ids"]), set(['2_aug0']))
+        self.assertEqual(set(ids["test_ids"]), set(['3_aug0']))
+        self.assertTrue(os.path.exists(paths["train_ids"]))
+        self.assertTrue(os.path.exists(paths["val_ids"]))
+        self.assertTrue(os.path.exists(paths["test_ids"]))
+
     def test_augment_ids_only_train(self):
         train_ids = ['1', '2']
         val_ids = []
         test_ids = []
-        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
+        split = {"train_ids": train_ids, "val_ids": val_ids, "test_ids": test_ids}
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/input_folder'
+        output_path = self.tmp_dir
         annotation_suffix = '_coco.json'
 
         # Test case 2: Only train IDs have augmented files
-        aug_train_ids, aug_val_ids, aug_test_ids = augment_ids(train_ids, val_ids, test_ids, augmented_path, annotation_suffix)
-        self.assertEqual(set(aug_train_ids), set(['1_aug0', '1_aug1', '1_aug2', '2_aug0','2_aug1', '2_aug2']))
-        self.assertEqual(aug_val_ids, [])
-        self.assertEqual(aug_test_ids, [])
-    
-    def test_augment_ids_not_only_train(self):
-        train_ids = ['1', '2', '3']
-        val_ids = ['1', '2']
+        with self.assertRaises(FileNotFoundError):
+            augment_ids(split, annotations_path, output_path, annotation_suffix, self.augmentation)
+
+    def test_augmentation_only_train(self):
+        train_ids = ['1']
+        val_ids = ['2']
         test_ids = ['3']
-        augmented_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/augmentation_folder'
+        split = {"train_ids": train_ids, "val_ids": val_ids, "test_ids": test_ids}
+        annotations_path = os.path.dirname(os.path.realpath(__file__)) + '/test_data/input_folder'
+        output_path = self.tmp_dir
         annotation_suffix = '_coco.json'
 
-        # Test case 3: Only train and val IDs have augmented files, with aug_train_only=False
-        aug_train_ids, aug_val_ids, aug_test_ids = augment_ids(train_ids, val_ids, test_ids, augmented_path, annotation_suffix, aug_train_only=False)
-        self.assertEqual(set(aug_train_ids), set(['1_aug0', '1_aug1', '1_aug2', '2_aug0', '2_aug1', '2_aug2', '3_aug0', '3_aug1', '3_aug2']))
-        self.assertEqual(set(aug_val_ids), set(['1_aug0', '1_aug1', '1_aug2', '2_aug0','2_aug1', '2_aug2']))
-        self.assertEqual(set(aug_test_ids), set(['3_aug0', '3_aug1', '3_aug2']))
-
+        augmentation = {
+            "input_path": os.path.dirname(os.path.realpath(__file__)) + '/test_data/input_images_folder',
+            "train": {
+                "functions": [
+                    "RandomCrop", "HorizontalFlip", "VerticalFlip", "RandomRotate90",
+                    "GridDistortion", "Blur", "RandomBrightnessContrast", "RandomGamma"],
+                "times": 2},
+            "val": {
+                "functions": [],
+                "times": 0},
+            "test": {
+                "functions": [],
+                "times": 0}
+        }
+        
+        # Test case 3: augmentation only for training set
+        ids, paths = augment_ids(split, annotations_path, output_path, annotation_suffix, self.augmentation)
+        self.assertEqual(set(ids["train_ids"]), set(['1_aug0', '1_aug1']))
+        self.assertEqual(set(ids["val_ids"]), set(['2_aug0']))
+        self.assertEqual(set(ids["test_ids"]), set(['3_aug0']))
+        self.assertTrue(os.path.exists(paths["train_ids"]))
+        self.assertTrue(os.path.exists(paths["val_ids"]))
+        self.assertTrue(os.path.exists(paths["test_ids"]))
 
 if __name__ == '__main__':
     unittest.main()
