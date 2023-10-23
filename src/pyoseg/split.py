@@ -190,6 +190,21 @@ def create_split_annotations(train_ids, val_ids, test_ids, annotations_path, out
 
 
 def augment_ids(split, annotations_path, output_path, annotation_suffix, augmentation, shuffle=True):
+    """
+    Generates a dictionary of augmented image ids and paths for each split.
+
+    Parameters:
+        split (dict): A dictionary containing the splits as keys and a list of file names as values.
+        annotations_path (str): The path to the directory containing the annotations.
+        output_path (str): The path to the directory where the augmented images will be saved.
+        annotation_suffix (str): The suffix of the annotation files.
+        augmentation (dict): A dictionary containing the augmentation configuration.
+        shuffle (bool, optional): Whether to shuffle the augmented image ids. Defaults to True.
+
+    Returns:
+        tuple: A tuple containing two dictionaries. The first dictionary contains the augmented image ids for
+            each split, and the second dictionary contains the corresponding paths to the augmented images.
+    """
 
     dir_data = augmentation["input_path"]
     dir_anns = annotations_path
