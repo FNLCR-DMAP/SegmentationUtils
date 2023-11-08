@@ -20,9 +20,9 @@ class TestPlotIntersections(unittest.TestCase):
 
     def test_plot_intersections_output(self):
         # Test produced output
-        image = np.array([[(0,0,0), (2,3,2), (3,2,3), (15,14,15)],
-                          [(0,0,0), (3,2,3), (2,3,2), (0,0,0)],
-                          [(0,0,0), (0,0,0), (0,0,0), (25,24,25)]])
+        image = np.array([[(0, 0, 0), (2, 3, 2), (3, 2, 3), (15, 14, 15)],
+                          [(0, 0, 0), (3, 2, 3), (2, 3, 2), (0, 0, 0)],
+                          [(0, 0, 0), (0, 0, 0), (0, 0, 0), (25, 24, 25)]])
         gt = np.array([[0, 1, 1, 3],
                        [0, 1, 1, 0],
                        [0, 0, 0, 2]])

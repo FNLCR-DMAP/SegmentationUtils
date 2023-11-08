@@ -13,7 +13,7 @@ import shapely
 
 
 augmentations = {
-    "RandomCrop": RandomCrop(p=1., height=256, width=256),
+    "RandomCrop": RandomCrop(p=1., height=512, width=512),
     "HorizontalFlip": HorizontalFlip(p=.5),
     "VerticalFlip": VerticalFlip(p=.5),
     "RandomRotate90": RandomRotate90(p=.5),

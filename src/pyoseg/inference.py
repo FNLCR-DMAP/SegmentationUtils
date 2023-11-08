@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import pycocotools.mask as mask
 import seaborn as sns
 import json
@@ -134,7 +133,6 @@ def get_intersections(gt, pred):
     iou = get_iou(pred, gt, 1)
     tp, fp, fn = precision_at(0.7, iou, 1)
     fn_indexes = np.nonzero(fn)[0] + 1
-    # fp_indexes = np.nonzero(fp)[0] + 1
 
     # Highlight false negative IDs from ground truth
     gt_fn = np.zeros(gt.shape)
@@ -229,17 +227,14 @@ def plot_intersections(gt, gt_per, gt_xor, image, name='intersections.png'):
         Returns:
             None
     """
-    nfigures = 3
-    dim = (0, 200, 0, 200)
-
     image = rgb2gray(image)
+    nfigures = 3
 
     fig, axes = plt.subplots(1, nfigures, figsize=(32, 32))
     fig.tight_layout(pad=-2.6)
     nuclei_cmap = "gist_ncar"
     inf_alpha = 0.3
     err_alpha = 0.25
-    mag = 1
 
     # Cconvert zero to black color in gitst_ncar
     nuclei_cmap = color_map(nuclei_cmap)
@@ -257,13 +252,6 @@ def plot_intersections(gt, gt_per, gt_xor, image, name='intersections.png'):
     axes_id += 1
     axes[axes_id].imshow(image, cmap=plt.cm.gray)
     axes[axes_id].imshow(gt_xor, cmap=nuclei_cmap, alpha=err_alpha)
-
-    # x_loc = int((dim[1] - dim[0]) * 3 / 4)
-    y_loc = int((dim[3] - dim[2]) * 7 / 8)
-
-    lower_write = dim[1] - dim[0] - 20 / (500 / (dim[1] - dim[0]))
-    rect = patches.Rectangle((lower_write - mag, y_loc), mag, 8, color='w')
-    axes[axes_id].add_patch(rect)
 
     # Turn off axis and y axis
     for axes_id in range(0, nfigures):
