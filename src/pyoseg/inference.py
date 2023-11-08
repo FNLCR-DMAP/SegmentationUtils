@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import pycocotools.mask as mask
 import seaborn as sns
 import json
@@ -39,7 +38,7 @@ def get_iou(inference, gt, quiet=True):
         print("Inference nuclei:", len(pred_objects)-1)
     true_bins = np.append(true_objects, true_objects[-1] + 1)
     pred_bins = np.append(pred_objects, pred_objects[-1] + 1)
-    
+
     intersection, xedges, yedges = np.histogram2d(
         gt.flatten(), inference.flatten(), bins=(true_bins, pred_bins))
     area_true = np.histogram(gt, bins=true_bins)[0]
@@ -48,8 +47,8 @@ def get_iou(inference, gt, quiet=True):
     area_pred = np.expand_dims(area_pred, 0)
 
     union = area_true + area_pred - intersection
-    intersection = intersection[1:,1:]
-    union = union[1:,1:]
+    intersection = intersection[1:, 1:]
+    union = union[1:, 1:]
     union[union == 0] = 1e-9
     iou = intersection / union
 
@@ -74,7 +73,7 @@ def precision_at(threshold, iou, quiet=True):
             positives, and false negatives.
     """
     matches = iou > threshold
-    true_positives = np.sum(matches, axis=1) == 1  # Correct objects
+    true_positives = np.sum(matches, axis=1) == 1   # Correct objects
     false_positives = np.sum(matches, axis=0) == 0  # Missed objects
     false_negatives = np.sum(matches, axis=1) == 0  # Extra objects
     tp, fp, fn = np.sum(true_positives), np.sum(false_positives), \
@@ -104,7 +103,7 @@ def get_permuted_lookup(ids, max_ids=None, seed=2):
     # No ids given
     if len(ids) == 0:
         raise ValueError("No ids given")
-    
+
     # Permute the instance ids for better display
     np.random.seed(seed)
     max_id = np.max(ids)
@@ -134,7 +133,6 @@ def get_intersections(gt, pred):
     iou = get_iou(pred, gt, 1)
     tp, fp, fn = precision_at(0.7, iou, 1)
     fn_indexes = np.nonzero(fn)[0] + 1
-    fp_indexes = np.nonzero(fp)[0] + 1
 
     # Highlight false negative IDs from ground truth
     gt_fn = np.zeros(gt.shape)
@@ -144,10 +142,10 @@ def get_intersections(gt, pred):
     gt_xor_inference = np.bitwise_xor(gt != 0, pred != 0) * 2500
     lookup_gt = get_permuted_lookup(gt)
     gt_fn_permuted = lookup_gt[gt_fn.astype("uint16")]
-    
+
     # Highlight all the false positive nuclei in addition to xor
     np.copyto(gt_xor_inference, gt_fn_permuted, where=gt_fn != 0)
-        
+
     lookup_inference = get_permuted_lookup(pred.astype("uint16"))
     inference_permuted = lookup_inference[pred.astype("uint16")]
     return [inference_permuted, gt_xor_inference]
@@ -182,10 +180,12 @@ def plot_gt_image(img, gt, name='gt.png'):
     Parameters:
         img (ndarray): The original image.
         gt (ndarray): The ground truth mask.
-        name (str, optional): The name of the output image file. Defaults to 'gt.png'.
+        name (str, optional): The name of the output image file. Defaults to
+            'gt.png'.
 
     Raises:
-        AssertionError: If the shape of the image and the ground truth mask are different.
+        AssertionError: If the shape of the image and the ground truth mask
+            are different.
 
     Returns:
         None
@@ -227,17 +227,14 @@ def plot_intersections(gt, gt_per, gt_xor, image, name='intersections.png'):
         Returns:
             None
     """
-    nfigures = 3
-    dim = (0, 200, 0, 200)
-
     image = rgb2gray(image)
+    nfigures = 3
 
     fig, axes = plt.subplots(1, nfigures, figsize=(32, 32))
     fig.tight_layout(pad=-2.6)
     nuclei_cmap = "gist_ncar"
     inf_alpha = 0.3
     err_alpha = 0.25
-    mag = 1
 
     # Cconvert zero to black color in gitst_ncar
     nuclei_cmap = color_map(nuclei_cmap)
@@ -255,13 +252,6 @@ def plot_intersections(gt, gt_per, gt_xor, image, name='intersections.png'):
     axes_id += 1
     axes[axes_id].imshow(image, cmap=plt.cm.gray)
     axes[axes_id].imshow(gt_xor, cmap=nuclei_cmap, alpha=err_alpha)
-
-    x_loc = int((dim[1] - dim[0]) * 3 / 4)
-    y_loc = int((dim[3] - dim[2]) * 7 / 8)
-
-    lower_write = dim[1] - dim[0] - 20 / (500 / (dim[1] - dim[0]))
-    rect = patches.Rectangle((lower_write - mag, y_loc), mag, 8, color='w')
-    axes[axes_id].add_patch(rect)
 
     # Turn off axis and y axis
     for axes_id in range(0, nfigures):
@@ -331,20 +321,23 @@ def get_gt_annotations(file, ids):
 
 def get_poly_from_segmentation(ann):
     """
-    Takes in an annotation and returns a polygon representation of the annotation.
+    Takes in an annotation and returns a polygon representation of the
+    annotation.
 
     Parameters:
-        ann: The annotation to convert to a polygon. It can be either a list or a dictionary.
+        ann: The annotation to convert to a polygon. It can be either a list
+            or a dictionary.
 
     Returns:
-        The polygon representation of the annotation. If the annotation is a list,
-            it returns the first element of the list. If the annotation is a dictionary,
-            it decodes the mask and returns the polygon representation. If the annotation
-            is neither a list nor a dictionary, it returns None.
+        The polygon representation of the annotation. If the annotation is a
+            list, it returns the first element of the list. If the annotation
+            is a dictionary, it decodes the mask and returns the polygon
+            representation. If the annotation is neither a list nor a
+            dictionary, it returns None.
     """
-    if type(ann) == list:
+    if type(ann) is list:
         return ann[0]
-    if type(ann) == dict:
+    if type(ann) is dict:
         poly_list = mask.decode(ann)
         return cv_to_poly(poly_list)
     return None
@@ -437,8 +430,9 @@ def annotation_poly_to_tiff(
         tifffile.imwrite(output_name, masks)
     return masks
 
-# https://github.com/hazirbas/coco-json-converter/blob/master/generate_coco_json.py
+
 def polygon_from_mask(maskedArr):
+    # https://github.com/hazirbas/coco-json-converter/blob/master/generate_coco_json.py
     """
     Given a masked array, this function finds the contours of the mask and
     returns the polygon, bounding rectangle, and area.
@@ -551,22 +545,21 @@ def non_maximum_suppression(
 
             try:
                 polygon_intersection = poly_i.intersection(poly_j).area
-            except:
+            except Exception:
                 poly_i = poly_i.buffer(0)
                 poly_j = poly_j.buffer(0)
                 try:
                     polygon_intersection = poly_i.intersection(poly_j).area
-                except:
+                except Exception:
                     continue
             if polygon_intersection == 0:
                 continue
 
             try:
                 polygon_union = poly_i.union(poly_j).area
-            except:
+                IOU = polygon_intersection / polygon_union
+            except Exception:
                 continue
-
-            IOU = polygon_intersection / polygon_union 
 
             if IOU > threshold:
                 if not quiet:
@@ -576,9 +569,13 @@ def non_maximum_suppression(
                 if (output_name == ""):
                     continue
                 if obs_color == 1:
-                    cv2.fillPoly(nms_images, pts=[np.array(contour_i).astype(np.int32)], color=1)
+                    cv2.fillPoly(
+                        nms_images, pts=[np.array(contour_i).astype(np.int32)],
+                        color=1)
                 obs_color += 10
-                cv2.fillPoly(nms_images, pts=[np.array(contour_j).astype(np.int32)], color=obs_color)
+                cv2.fillPoly(
+                    nms_images, pts=[np.array(contour_j).astype(np.int32)],
+                    color=obs_color)
 
     if (output_name != ""):
         nuclei_cmap = color_map()
@@ -836,58 +833,102 @@ def scatter_plot_with_regression(x, y, color, xlabel, ylabel, name):
 
 def inference_analysis_plots(results, output_path):
     """
-    Generate inference analysis plots based on the results and save them to the specified output path.
+    Generate inference analysis plots based on the results and save them to
+    the specified output path.
 
     Parameters:
-        results (list): A list of dictionaries containing the results of the inference analysis.
+        results (list): A list of dictionaries containing the results of the
+            inference analysis.
         output_path (str): The path where the generated plots will be saved.
 
     Returns:
         None
     """
-    precision, recall, f1, objs, gb_ratio = [],[],[],[],[]
+    precision, recall, f1, objs, gb_ratio = [], [], [], [], []
     for i in range(len(results)-1):
         precision.append(results[i]["precision"])
         recall.append(results[i]["recall"])
         f1.append(results[i]["f1"])
         objs.append(results[i]["gt_objects"])
         gb_ratio.append(results[i]["green_blue_ratio"])
-    
+
     # Precision, recall and F1-score plots
-    histogram_plot(precision,'orange','Precision','Counts',f"{output_path}/Precision_histogram.png")
-    histogram_plot(recall,'orange','Recall','Counts',f"{output_path}/Recall_histogram.png")
-    histogram_plot(f1,'orange','F1','Counts',f"{output_path}/F1-score_histogram.png")
+    histogram_plot(
+        precision, 'orange', 'Precision', 'Counts',
+        f"{output_path}/Precision_histogram.png")
+    histogram_plot(
+        recall, 'orange', 'Recall', 'Counts',
+        f"{output_path}/Recall_histogram.png")
+    histogram_plot(
+        f1, 'orange', 'F1', 'Counts',
+        f"{output_path}/F1-score_histogram.png")
 
     # Precision, recall and F1-score per number of objects and g/b ratio
-    scatter_plot_with_regression(objs,precision,'orange','Number of objects','Precision',f"{output_path}/Precision_vs_n_objects.png")
-    scatter_plot_with_regression(objs,recall,'orange','Number of objects','Recall',f"{output_path}/Recall_vs_n_objects.png")
-    scatter_plot_with_regression(objs,f1,'orange','Number of objects','F1',f"{output_path}/F1-score_vs_n_objects.png")
-    scatter_plot_with_regression(gb_ratio,precision,'orange','G/B Ratio','Precision',f"{output_path}/Precision_vs_gb-ratio.png")
-    scatter_plot_with_regression(gb_ratio,recall,'orange','G/B Ratio','Recall',f"{output_path}/Recall_vs_gb-ratio.png")
-    scatter_plot_with_regression(gb_ratio,f1,'orange','G/B Ratio','F1',f"{output_path}/F1-score_vs_gb-ratio.png")
+    scatter_plot_with_regression(
+        objs, precision, 'orange', 'Number of objects', 'Precision',
+        f"{output_path}/Precision_vs_n_objects.png")
+    scatter_plot_with_regression(
+        objs, recall, 'orange', 'Number of objects', 'Recall',
+        f"{output_path}/Recall_vs_n_objects.png")
+    scatter_plot_with_regression(
+        objs, f1, 'orange', 'Number of objects', 'F1',
+        f"{output_path}/F1-score_vs_n_objects.png")
+    scatter_plot_with_regression(
+        gb_ratio, precision, 'orange', 'G/B Ratio', 'Precision',
+        f"{output_path}/Precision_vs_gb-ratio.png")
+    scatter_plot_with_regression(
+        gb_ratio, recall, 'orange', 'G/B Ratio', 'Recall',
+        f"{output_path}/Recall_vs_gb-ratio.png")
+    scatter_plot_with_regression(
+        gb_ratio, f1, 'orange', 'G/B Ratio', 'F1',
+        f"{output_path}/F1-score_vs_gb-ratio.png")
 
     n_cells_bins = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-    n_cells_x = [(n_cells_bins[i+1]-n_cells_bins[i])/2+n_cells_bins[i] for i in range(len(n_cells_bins)-1)]
-    n_cells_xerr = [(n_cells_bins[i+1]-n_cells_bins[i])/2 for i in range(len(n_cells_bins)-1)]
+    n_cells_x = [
+        (n_cells_bins[i+1]-n_cells_bins[i])/2+n_cells_bins[i] for i in
+        range(len(n_cells_bins)-1)]
+    n_cells_xerr = [
+        (n_cells_bins[i+1]-n_cells_bins[i])/2 for i in
+        range(len(n_cells_bins)-1)]
     prec_n_cells = [None for c in range(len(n_cells_bins)-1)]
     recall_n_cells = [None for c in range(len(n_cells_bins)-1)]
     f1_n_cells = [None for c in range(len(n_cells_bins)-1)]
     for i in range(len(n_cells_bins)-1):
-        tp,fp,fn=0,0,0
+        tp, fp, fn = 0, 0, 0
         for j in range(len(results)-1):
-            if (results[j]["gt_objects"] >= n_cells_bins[i] and results[j]["gt_objects"] < n_cells_bins[i+1]):
+            if results[j]["gt_objects"] >= n_cells_bins[i] and \
+                    results[j]["gt_objects"] < n_cells_bins[i+1]:
                 tp += results[j]["tp"]
                 fp += results[j]["fp"]
                 fn += results[j]["fn"]
         if tp > 0:
-            prec_n_cells[i],recall_n_cells[i],f1_n_cells[i] = metrics(tp, fp, fn)
-    
-    scatter_error_plot(n_cells_x, prec_n_cells, n_cells_xerr, None, 'orange', 'Number of cells', 'Precision', f"{output_path}/Precision_vs_number-of-cells.png")
-    scatter_error_plot(n_cells_x, recall_n_cells, n_cells_xerr, None, 'orange', 'Number of cells', 'Recall', f"{output_path}/Recall_vs_number-of-cells.png")
-    scatter_error_plot(n_cells_x, f1_n_cells, n_cells_xerr, None, 'orange', 'Number of cells', 'F1', f"{output_path}/F1-score_vs_number-of-cells.png")
+            prec_n_cells[i], recall_n_cells[i], f1_n_cells[i] = \
+                metrics(tp, fp, fn)
+
+    scatter_error_plot(
+        n_cells_x, prec_n_cells, n_cells_xerr, None,
+        'orange', 'Number of cells', 'Precision',
+        f"{output_path}/Precision_vs_number-of-cells.png")
+    scatter_error_plot(
+        n_cells_x, recall_n_cells, n_cells_xerr, None,
+        'orange', 'Number of cells', 'Recall',
+        f"{output_path}/Recall_vs_number-of-cells.png")
+    scatter_error_plot(
+        n_cells_x, f1_n_cells, n_cells_xerr, None,
+        'orange', 'Number of cells', 'F1',
+        f"{output_path}/F1-score_vs_number-of-cells.png")
 
 
-def create_inference_analysis(data_path, gt_annotations, inf_annotations, output_path, size_filter=25, score_filter=0.35, nms_threshold=0.3, quiet=True, precision_threshold=0.7):
+def create_inference_analysis(
+        data_path,
+        gt_annotations,
+        inf_annotations,
+        output_path,
+        size_filter=25,
+        score_filter=0.35,
+        nms_threshold=0.3,
+        quiet=True,
+        precision_threshold=0.7):
     """
     Creates an inference analysis for a given data set.
 
@@ -896,23 +937,28 @@ def create_inference_analysis(data_path, gt_annotations, inf_annotations, output
         gt_annotations (str): The path to the ground truth annotations file.
         inf_annotations (str): The path to the predicted annotations file.
         output_path (str): The path to the output directory.
-        size_filter (int, optional): The size filter for the predicted annotations. Defaults to 25.
-        score_filter (float, optional): The score filter for the predicted annotations. Defaults to 0.35.
-        nms_threshold (float, optional): The NMS threshold for the predicted annotations. Defaults to 0.3.
-        quiet (bool, optional): Whether to suppress console output. Defaults to True.
-        precision_threshold (float, optional): The precision threshold for the predicted annotations. Defaults to 0.7.
+        size_filter (int, optional): The size filter for the predicted
+            annotations. Defaults to 25.
+        score_filter (float, optional): The score filter for the predicted
+            annotations. Defaults to 0.35.
+        nms_threshold (float, optional): The NMS threshold for the predicted
+            annotations. Defaults to 0.3.
+        quiet (bool, optional): Whether to suppress console output. Defaults
+            to True.
+        precision_threshold (float, optional): The precision threshold for the
+            predicted annotations. Defaults to 0.7.
 
     Returns:
         list: A list of dictionaries containing the analysis results.
     """
     # GT infos
-    print(f" - Get GT annotations")
+    print(" - Get GT annotations")
     split_ids = get_split_ids(gt_annotations)
     pure_ids = [s[0] for s in split_ids]
     gt_anns = get_gt_annotations(gt_annotations, pure_ids)
 
     # Get predicted annotations
-    print(f" - Get predicted annotations")
+    print(" - Get predicted annotations")
     pred_anns = get_prediction_annotations(inf_annotations)
 
     # Create folder for intersections
@@ -926,37 +972,44 @@ def create_inference_analysis(data_path, gt_annotations, inf_annotations, output
     # Initialize variables
     sum_tp, sum_fp, sum_fn = 0, 0, 0
     results = []
-    print(f" - Comparison Loop:")
-    for (i,name) in split_ids:
+    print(" - Comparison Loop:")
+    for (i, name) in split_ids:
         print(f"   > {i}: {name}")
         # Get the annotations for this image id
         gt_ann = gt_anns[str(i)]
         pred_ann = pred_anns[str(i)]
 
         # Transform them to 2D arrays
-        gt = annotation_poly_to_tiff(gt_ann, gt_ann['images'][0]['height'], gt_ann['images'][0]['width'], ann_type="All")
-        pred = pred_to_tiff(pred_ann, gt_ann['images'][0]['height'], gt_ann['images'][0]['width'], size_filter, score_filter, nms_threshold, nms_name=f"{nms_path}/{name}")
+        gt = annotation_poly_to_tiff(
+            gt_ann, gt_ann['images'][0]['height'],
+            gt_ann['images'][0]['width'], ann_type="All")
+        pred = pred_to_tiff(
+            pred_ann, gt_ann['images'][0]['height'],
+            gt_ann['images'][0]['width'], size_filter, score_filter,
+            nms_threshold, nms_name=f"{nms_path}/{name}")
         im = skimage.io.imread(f"{data_path}/{name}")
-        
+
         # Extract metrics
         iou = get_iou(pred, gt, quiet)
         tp, fp, fn = precision_at(precision_threshold, iou, quiet)
         precision, recall, f1 = metrics(sum(tp), sum(fp), sum(fn))
 
         # Create intersection plots
-        gt_per, gt_xor = get_intersections(gt,pred)
-        file_path = f"{intersections_path}/intersections_{i}-{name.split('.')[0]}.png"
+        gt_per, gt_xor = get_intersections(gt, pred)
+        file_path = \
+            f"{intersections_path}/intersections_{i}-{name.split('.')[0]}.png"
         plot_intersections(gt, pred, gt_xor, im, file_path)
         plt.close()
         if (not quiet):
             print(f"TP, FP, FN:  {sum(tp)}, {sum(fp)}, {sum(fn)}")
-            print(f"pr, rc, f1:  {round(precision, 2)}, {round(recall, 2)}, {round(f1, 2)}")
+            print(f"pr, rc, f1:  {round(precision, 2)}, \
+                {round(recall, 2)}, {round(f1, 2)}")
 
         sum_tp += sum(tp)
         sum_fp += sum(fp)
         sum_fn += sum(fn)
 
-        r,g,b = get_image_channels(f"{data_path}/{name}")
+        r, g, b = get_image_channels(f"{data_path}/{name}")
         gb_ratio = get_channel_ratios(g, b)
         # Store results
         res = {
@@ -976,13 +1029,13 @@ def create_inference_analysis(data_path, gt_annotations, inf_annotations, output
         results.append(res)
 
     # Final metrics
-    print(f"\n - Global metrics")
+    print("\n - Global metrics")
     gPrec, gRec, gF1 = metrics(sum_tp, sum_fp, sum_fn)
     print(f"TP, FP, FN: {sum_tp}, {sum_fp}, {sum_fn}")
     print(f"Precision:  {round(gPrec, 2)}")
     print(f"Recall:     {round(gRec, 2)}")
     print(f"F1 score:   {round(gF1, 2)}")
-    
+
     res = {
             "image": "all",
             "image_id": "",
@@ -1007,21 +1060,30 @@ def create_inference_analysis(data_path, gt_annotations, inf_annotations, output
     return results
 
 
-def inference_cluster_analysis(results, cluster_file, cluster_column, image_column, output_path):
+def inference_cluster_analysis(
+        results,
+        cluster_file,
+        cluster_column,
+        image_column,
+        output_path):
     """
     Perform cluster analysis on the results of an inference.
 
     Parameters:
-        results (list): A list of dictionaries containing the results of the inference.
+        results (list): A list of dictionaries containing the results of the
+            inference.
         cluster_file (str): The path to the clustering file.
-        cluster_column (str): The column name in the clustering file containing the cluster labels.
-        image_column (str): The column name in the clustering file containing the image names.
-        output_path (str): The path to the directory where the output files will be saved.
+        cluster_column (str): The column name in the clustering file
+            containing the cluster labels.
+        image_column (str): The column name in the clustering file containing
+            the image names.
+        output_path (str): The path to the directory where the output files
+            will be saved.
 
     Returns:
         DataFrame: A Pandas DataFrame containing the cluster metrics.
     """
-    print(f" - Inference cluster analysis")
+    print(" - Inference cluster analysis")
     # Extract information from results
     current_imgs = []
     results_per_image = {}
@@ -1035,11 +1097,13 @@ def inference_cluster_analysis(results, cluster_file, cluster_column, image_colu
     clusters.sort()
 
     # Loop over clusters
-    p_arr, r_arr, f1_arr, c_arr, c_size, n_gts, n_gts_err, gb_ratio_arr, gb_ratio_arr_err = [], [], [], [], [], [], [], [], []
+    p_arr, r_arr, f1_arr, c_arr, c_size, n_gts = [], [], [], [], [], []
+    n_gts_err, gb_ratio_arr, gb_ratio_arr_err = [], [], []
     for c in clusters:
-        # Extract cluster data as an array, filtered by the images we have available 
+        # Extract cluster data as an array, filtered by the available images
         cdf = df[df[cluster_column] == c]
-        arr = np.array(cdf[cdf[image_column].isin(current_imgs)][image_column].to_list())
+        arr = np.array(
+            cdf[cdf[image_column].isin(current_imgs)][image_column].to_list())
         size = len(arr)
         print(f"Size of cluster '{c}': {size}")
         if size == 0:
@@ -1047,7 +1111,7 @@ def inference_cluster_analysis(results, cluster_file, cluster_column, image_colu
 
         cluster_path = f"{output_path}/cluster_{c}"
         os.system(f"mkdir {cluster_path}")
-        
+
         # Extract TP, FP and FN per cluster
         tp, fp, fn, gts, gb_ratio = 0, 0, 0, [], []
         for img in arr:
@@ -1056,7 +1120,9 @@ def inference_cluster_analysis(results, cluster_file, cluster_column, image_colu
             fn += results_per_image[img]['fn']
             gts.append(results_per_image[img]['gt_objects'])
             gb_ratio.append(results_per_image[img]['green_blue_ratio'])
-            os.system(f"cp {results_per_image[img]['intersection_path']} {cluster_path}")
+            os.system(
+                f"cp {results_per_image[img]['intersection_path']} \
+                    {cluster_path}")
 
         # Extract precision, recall and f1 per cluster
         precision, recall, f1 = metrics(tp, fp, fn)
@@ -1069,18 +1135,29 @@ def inference_cluster_analysis(results, cluster_file, cluster_column, image_colu
         n_gts_err.append(np.array(gts).std())
         gb_ratio_arr.append(np.array(gb_ratio).mean())
         gb_ratio_arr_err.append(np.array(gb_ratio).std())
-        print(f"Metrics (precis, recall, f1): {round(precision, 2)}, {round(recall, 2)}, {round(f1, 2)}")
+        print(f"Metrics (precis, recall, f1): {round(precision, 2)}, \
+            {round(recall, 2)}, {round(f1, 2)}")
         print(f"GT Objects: {round(np.array(gts).mean(), 2)}")
         print(f"G/B ratio: {round(np.array(gb_ratio).mean(), 2)}")
-    
-    # Precision, recall and F1-score per cluster
-    scatter_plot(c_arr, p_arr, 'orange', 'Cluster', 'Precision', f"{output_path}/Precision_vs_cluster.png", n_gts)
-    scatter_plot(c_arr, r_arr, 'orange', 'Cluster', 'Recall', f"{output_path}/Recall_vs_cluster.png", n_gts)
-    scatter_plot(c_arr, f1_arr, 'orange', 'Cluster', 'F1', f"{output_path}/F1-score_vs_cluster.png", n_gts)
-    scatter_error_plot(c_arr, n_gts, None, n_gts_err, 'orange', 'Cluster', 'GT Objects', f"{output_path}/GT-objects_vs_cluster.png")
-    scatter_error_plot(c_arr, gb_ratio_arr, None, gb_ratio_arr_err, 'orange', 'Cluster', 'G/B Ratio', f"{output_path}/GB-ratio_vs_cluster.png")
 
-    df = pd.DataFrame(columns=['cluster','precision','recall','f1'])
+    # Precision, recall and F1-score per cluster
+    scatter_plot(
+        c_arr, p_arr, 'orange', 'Cluster', 'Precision',
+        f"{output_path}/Precision_vs_cluster.png", n_gts)
+    scatter_plot(
+        c_arr, r_arr, 'orange', 'Cluster', 'Recall',
+        f"{output_path}/Recall_vs_cluster.png", n_gts)
+    scatter_plot(
+        c_arr, f1_arr, 'orange', 'Cluster', 'F1',
+        f"{output_path}/F1-score_vs_cluster.png", n_gts)
+    scatter_error_plot(
+        c_arr, n_gts, None, n_gts_err, 'orange', 'Cluster',
+        'GT Objects', f"{output_path}/GT-objects_vs_cluster.png")
+    scatter_error_plot(
+        c_arr, gb_ratio_arr, None, gb_ratio_arr_err, 'orange',
+        'Cluster', 'G/B Ratio', f"{output_path}/GB-ratio_vs_cluster.png")
+
+    df = pd.DataFrame(columns=['cluster', 'precision', 'recall', 'f1'])
     df['cluster'] = c_arr
     df['precision'] = p_arr
     df['recall'] = r_arr
@@ -1096,13 +1173,16 @@ def get_channel_ratios(channel_1, channel_2, from_counts=False):
     Parameters:
         channel_1 (array-like): The first channel.
         channel_2 (array-like): The second channel.
-        from_counts (bool, optional): If True, calculate the ratio from the counts of the channels. Defaults to False.
+        from_counts (bool, optional): If True, calculate the ratio from the
+            counts of the channels. Defaults to False.
 
     Returns:
         float: The channel ratio.
     """
     if from_counts:
-        return np.sum(np.array(channel_1).astype(bool))/np.sum(np.array(channel_2).astype(bool))
+        return np.sum(
+            np.array(channel_1).astype(bool))/np.sum(
+                np.array(channel_2).astype(bool))
     return np.sum(np.array(channel_1))/np.sum(np.array(channel_2))
 
 
@@ -1118,21 +1198,23 @@ def get_image_channels(file):
     """
     img = Image.open(file, mode='r')
     img = img.convert('RGB')
-    r,g,b = img.split()
-    return r,g,b
+    r, g, b = img.split()
+    return r, g, b
 
 
 def get_split_ids(f):
     """
-    Reads a JSON file and extracts the 'id' and 'file_name' values from each image object.
+    Reads a JSON file and extracts the 'id' and 'file_name' values from each
+        image object.
 
     Parameters:
         f (str): The path to the JSON file.
 
     Returns:
-        list: A list of tuples containing the 'id' and 'file_name' values for each image.
+        list: A list of tuples containing the 'id' and 'file_name' values for
+            each image.
     """
-    with open(f,'r') as file:
+    with open(f, 'r') as file:
         ann = json.load(file)
     data = [(a['id'], a['file_name']) for a in ann['images']]
     return data

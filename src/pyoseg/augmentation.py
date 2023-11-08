@@ -1,20 +1,19 @@
 import os
 import json
-import random
 import numpy as np
 import cv2
 import albumentations as A
 from albumentations import RandomRotate90, GridDistortion, HorizontalFlip, \
     VerticalFlip, Blur, RandomBrightnessContrast, RandomGamma, RandomCrop
-from pyoseg.inference import annotation_poly_to_tiff, plot_gt_image, cv_to_poly, \
-    poly_to_cv, get_poly_from_segmentation
+from pyoseg.inference import annotation_poly_to_tiff, plot_gt_image, \
+    cv_to_poly, poly_to_cv, get_poly_from_segmentation
 from PIL import Image
 import gc
 import shapely
 
 
 augmentations = {
-    "RandomCrop": RandomCrop(p=1., height=256, width=256),
+    "RandomCrop": RandomCrop(p=1., height=512, width=512),
     "HorizontalFlip": HorizontalFlip(p=.5),
     "VerticalFlip": VerticalFlip(p=.5),
     "RandomRotate90": RandomRotate90(p=.5),
@@ -47,8 +46,9 @@ def get_images_and_masks(
             - extension (str): The extension of the image files.
 """
     images = [f for f in os.listdir(data_path) if not f.startswith(".")]
-    masks = [f[:-len(annotation_suffix)] for f in
-             os.listdir(annotations_path) if annotation_suffix in f and not f.startswith(".")]
+    masks = [
+        f[:-len(annotation_suffix)] for f in os.listdir(annotations_path)
+        if annotation_suffix in f and not f.startswith(".")]
     if len(images) == 0:
         raise FileNotFoundError(
             f"No images found inside '{data_path}', please check.")
@@ -112,7 +112,7 @@ def create_augmentation_transform(functions=augmentations.keys()):
             raise KeyError(
                 f"Please provide a valid augmentation function: {f}.")
     return A.Compose([augmentations[f] for f in functions])
-    
+
 
 def augment_data(
         data_path, annotations_path, output_path,
@@ -139,7 +139,9 @@ def augment_data(
     """
     assert [i in functions for i in augmentations.keys()], \
         "Please provide a valid augmentation function."
-    transform = create_augmentation_transform(functions)
+    transform = None
+    if times > 0:
+        transform = create_augmentation_transform(functions)
 
     images, masks, extension = get_images_and_masks(
         data_path, annotations_path, annotation_suffix)
@@ -158,13 +160,15 @@ def augment_data(
 
         gt_image = Image.fromarray(np.uint8(image.copy()))
         gt = annotation_poly_to_tiff(
-                mask0, mask0['images'][0]['height'], mask0['images'][0]['width'],
-                ann_type="All")
+            mask0, mask0['images'][0]['height'],
+            mask0['images'][0]['width'], ann_type="All")
 
         if include_original or times == 0:
-            cv2.imwrite(f"{output_path}/{images[i]}_aug{n_aug}{extension}", image)
+            cv2.imwrite(
+                f"{output_path}/{images[i]}_aug{n_aug}{extension}", image)
             save_mask(
-                f"{output_path}/{images[i]}_aug{n_aug}{annotation_suffix}", mask0)
+                f"{output_path}/{images[i]}_aug{n_aug}{annotation_suffix}",
+                mask0)
             plot_gt_image(
                 gt_image, gt, f"{output_path}/GT_{images[i]}_aug{n_aug}.png")
 
@@ -206,7 +210,7 @@ def augment_data(
                 segmentation = cv_to_poly(i_masks[mask_id])
                 if segmentation is None:
                     continue
-                
+
                 area = get_area_from_poly(segmentation)
                 bbox = get_bbox_from_poly(segmentation)
                 new_mask = {
@@ -272,7 +276,8 @@ def mask_array(mask):
     height, width = mask['images'][0]['height'], mask['images'][0]['width']
     masks = []
     for i in range(len(mask['annotations'])):
-        poly_list = get_poly_from_segmentation(mask['annotations'][i]['segmentation'])
+        poly_list = get_poly_from_segmentation(
+            mask['annotations'][i]['segmentation'])
         if poly_list is None:
             continue
         cv_mask = poly_to_cv(poly_list, height, width)
@@ -294,7 +299,7 @@ def get_bbox_from_poly(poly):
     """
     if len(poly) == 0:
         return [0, 0, 0, 0]
-    
+
     poly_x = [poly[i] for i in range(0, len(poly), 2)]
     poly_y = [poly[i] for i in range(1, len(poly), 2)]
     min_x, min_y = min(poly_x), min(poly_y)
@@ -318,8 +323,8 @@ def get_area_from_poly(poly):
     area = 0
     try:
         area = shapely.Polygon(np.array(poly, dtype=np.int8)).area
-    except:
+    except Exception:
         x = [poly[i] for i in range(0, len(poly), 2)]
         y = [poly[i] for i in range(1, len(poly), 2)]
-        area = 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
+        area = 0.5*np.abs(np.dot(x, np.roll(y, 1))-np.dot(y, np.roll(x, 1)))
     return area
